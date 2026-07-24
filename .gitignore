@@ -1,0 +1,35 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+
+# Next.js
+.next/
+out/
+build/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Editor Files
+.vscode/
+.idea/
+
+# Backend specific (if any)
+backend/node_modules/
+backend/.env
+
+# Frontend specific (if any)
+frontend/node_modules/
+frontend/.next/
+frontend/.env
+frontend/.env.local
