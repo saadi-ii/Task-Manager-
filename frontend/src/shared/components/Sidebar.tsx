@@ -45,7 +45,7 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
           <div className="flex items-center gap-2">
             <TbArrowBadgeRightFilled
               className={`size-5 ${
-                active === "home" && highlight==true ? "visible" : "invisible"
+                active === "home"? "visible" : "invisible"
               }`}
             />
 
