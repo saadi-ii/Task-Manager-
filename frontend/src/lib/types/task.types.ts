@@ -18,7 +18,7 @@ export interface RenameTaskPayload {
 }
 
 export interface MoveTaskPayload {
-  taskname: string;
+  taskid: string;
   columnid: string;
 }
 

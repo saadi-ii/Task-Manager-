@@ -1,25 +1,10 @@
 import { Request, Response } from "express"
 import taskModel from "../model/task.model"
-import signUpModel from "../model/signup.model"
-import jwt, { JwtPayload } from "jsonwebtoken"
+import subtaskModel from "../model/subtask.model"
 
 export const _create = async (req: Request, res: Response): Promise<void> => {
     const data = req.body
-
-    const token = req.cookies.token as string
-    const secret = process.env.JWT_SECRET as string
-    if (!token) {
-        res.status(401).json("Please SignUp First")
-        return
-    }
-    const decode = await jwt.verify(token, secret) as JwtPayload
-    const isUserExist = await signUpModel.findOne({
-        _id: decode._id
-    })
-    if (!isUserExist) {
-        res.status(401).json("Unauthorized")
-        return
-    }
+    const userId = req.userId as string
 
     if (!data.taskname?.trim()) {
         res.status(400).json({ message: "Must write taskname" })
@@ -29,7 +14,7 @@ export const _create = async (req: Request, res: Response): Promise<void> => {
     const isTaskInSuchColumnExist = await taskModel.findOne({
         columnid: data.columnid,
         taskname: data.taskname,
-        userID: decode._id
+        userID: userId
     })
 
     if (isTaskInSuchColumnExist) {
@@ -40,7 +25,7 @@ export const _create = async (req: Request, res: Response): Promise<void> => {
     await taskModel.create({
         columnid: data.columnid,
         taskname: data.taskname,
-        userID: decode._id
+        userID: userId
     })
 
     res.status(201).json({ message: "Task created" })
@@ -48,23 +33,10 @@ export const _create = async (req: Request, res: Response): Promise<void> => {
 
 
 export const _get = async (req: Request, res: Response): Promise<void> => {
-    const token = req.cookies.token as string
-    const secret = process.env.JWT_SECRET as string
-    if (!token) {
-        res.status(401).json("Please SignUp First")
-        return
-    }
-    const decode = await jwt.verify(token, secret) as JwtPayload
-    const isUserExist = await signUpModel.findOne({
-        _id: decode._id
-    })
-    if (!isUserExist) {
-        res.status(401).json("Unauthorized")
-        return
-    }
+    const userId = req.userId as string
 
     const tasks = await taskModel.find({
-        userID: decode._id
+        userID: userId
     })
     res.status(200).json({ tasks })
 }
@@ -72,24 +44,29 @@ export const _get = async (req: Request, res: Response): Promise<void> => {
 
 export const _markCompletion = async (req: Request, res: Response): Promise<void> => {
     const data = req.body
+    const userId = req.userId as string
 
-    const token = req.cookies.token as string
-    const secret = process.env.JWT_SECRET as string
-    if (!token) {
-        res.status(401).json("Please SignUp First")
+    const movingTask = await taskModel.findOne({ _id: data.taskid, userID: userId })
+
+    if (!movingTask) {
+        res.status(404).json({ message: "Task not found" })
         return
     }
-    const decode = await jwt.verify(token, secret) as JwtPayload
-    const isUserExist = await signUpModel.findOne({
-        _id: decode._id
+
+    const duplicateInTargetColumn = await taskModel.findOne({
+        columnid: data.columnid,
+        taskname: movingTask.taskname,
+        userID: userId,
+        _id: { $ne: movingTask._id }
     })
-    if (!isUserExist) {
-        res.status(401).json("Unauthorized")
+
+    if (duplicateInTargetColumn) {
+        res.status(409).json({ message: "A task with this name already exists in the target column" })
         return
     }
 
     const task = await taskModel.findOneAndUpdate(
-        { taskname: data.taskname, userID: decode._id },
+        { _id: data.taskid, userID: userId },
         { columnid: data.columnid },
         { new: true }
     )
@@ -100,24 +77,10 @@ export const _markCompletion = async (req: Request, res: Response): Promise<void
 
 export const _rename = async (req: Request, res: Response): Promise<void> => {
     const data = req.body
-
-    const token = req.cookies.token as string
-    const secret = process.env.JWT_SECRET as string
-    if (!token) {
-        res.status(401).json("Please SignUp First")
-        return
-    }
-    const decode = await jwt.verify(token, secret) as JwtPayload
-    const isUserExist = await signUpModel.findOne({
-        _id: decode._id
-    })
-    if (!isUserExist) {
-        res.status(401).json("Unauthorized")
-        return
-    }
+    const userId = req.userId as string
 
     const task = await taskModel.findOneAndUpdate(
-        { taskname: data.taskname, userID: decode._id },
+        { taskname: data.taskname, userID: userId },
         { taskname: data.newtaskname },
         { new: true }
     )
@@ -128,24 +91,10 @@ export const _rename = async (req: Request, res: Response): Promise<void> => {
 
 export const _priority = async (req: Request, res: Response): Promise<void> => {
     const data = req.body
-
-    const token = req.cookies.token as string
-    const secret = process.env.JWT_SECRET as string
-    if (!token) {
-        res.status(401).json("Please SignUp First")
-        return
-    }
-    const decode = await jwt.verify(token, secret) as JwtPayload
-    const isUserExist = await signUpModel.findOne({
-        _id: decode._id
-    })
-    if (!isUserExist) {
-        res.status(401).json("Unauthorized")
-        return
-    }
+    const userId = req.userId as string
 
     const task = await taskModel.findOneAndUpdate(
-        { taskname: data.taskname, columnid: data.columnid, userID: decode._id },
+        { taskname: data.taskname, columnid: data.columnid, userID: userId },
         { priority: data.priority },
         { new: true }
     )
@@ -156,26 +105,12 @@ export const _priority = async (req: Request, res: Response): Promise<void> => {
 
 export const _getPriority = async (req: Request, res: Response): Promise<void> => {
     const data = req.query
-
-    const token = req.cookies.token as string
-    const secret = process.env.JWT_SECRET as string
-    if (!token) {
-        res.status(401).json("Please SignUp First")
-        return
-    }
-    const decode = await jwt.verify(token, secret) as JwtPayload
-    const isUserExist = await signUpModel.findOne({
-        _id: decode._id
-    })
-    if (!isUserExist) {
-        res.status(401).json("Unauthorized")
-        return
-    }
+    const userId = req.userId as string
 
     const task = await taskModel.findOne({
         taskname: data.taskname as string,
         columnid: data.columnid as string,
-        userID: decode._id
+        userID: userId
     })
 
     if (task?.priority) {
@@ -188,24 +123,10 @@ export const _getPriority = async (req: Request, res: Response): Promise<void> =
 
 export const _date = async (req: Request, res: Response): Promise<void> => {
     const data = req.body
-
-    const token = req.cookies.token as string
-    const secret = process.env.JWT_SECRET as string
-    if (!token) {
-        res.status(401).json("Please SignUp First")
-        return
-    }
-    const decode = await jwt.verify(token, secret) as JwtPayload
-    const isUserExist = await signUpModel.findOne({
-        _id: decode._id
-    })
-    if (!isUserExist) {
-        res.status(401).json("Unauthorized")
-        return
-    }
+    const userId = req.userId as string
 
     const task = await taskModel.findOneAndUpdate(
-        { taskname: data.taskname, columnid: data.columnid, userID: decode._id },
+        { taskname: data.taskname, columnid: data.columnid, userID: userId },
         { date: data.date },
         { new: true }
     )
@@ -216,26 +137,12 @@ export const _date = async (req: Request, res: Response): Promise<void> => {
 
 export const _getDate = async (req: Request, res: Response): Promise<void> => {
     const data = req.query
-
-    const token = req.cookies.token as string
-    const secret = process.env.JWT_SECRET as string
-    if (!token) {
-        res.status(401).json("Please SignUp First")
-        return
-    }
-    const decode = await jwt.verify(token, secret) as JwtPayload
-    const isUserExist = await signUpModel.findOne({
-        _id: decode._id
-    })
-    if (!isUserExist) {
-        res.status(401).json("Unauthorized")
-        return
-    }
+    const userId = req.userId as string
 
     const task = await taskModel.findOne({
         taskname: data.taskname as string,
         columnid: data.columnid as string,
-        userID: decode._id
+        userID: userId
     })
 
     if (task?.date) {
@@ -248,27 +155,25 @@ export const _getDate = async (req: Request, res: Response): Promise<void> => {
 
 export const _delete = async (req: Request, res: Response): Promise<void> => {
     const data = req.query
+    const userId = req.userId as string
 
-    const token = req.cookies.token as string
-    const secret = process.env.JWT_SECRET as string
-    if (!token) {
-        res.status(401).json("Please SignUp First")
-        return
+    try {
+        const deletedTask = await taskModel.findOneAndDelete({
+            taskname: data.taskname as string,
+            columnid: data.columnid as string,
+            userID: userId
+        })
+
+        if (!deletedTask) {
+            res.status(404).json({ message: "Task not found" })
+            return
+        }
+
+        await subtaskModel.deleteMany({ taskid: String(deletedTask._id) })
+
+        res.status(200).json({ message: "Task deleted" })
+    } catch (error) {
+        console.error("Task delete error:", error)
+        res.status(500).json({ message: "Internal server error" })
     }
-    const decode = await jwt.verify(token, secret) as JwtPayload
-    const isUserExist = await signUpModel.findOne({
-        _id: decode._id
-    })
-    if (!isUserExist) {
-        res.status(401).json("Unauthorized")
-        return
-    }
-
-    await taskModel.findOneAndDelete({
-        taskname: data.taskname as string,
-        columnid: data.columnid as string,
-        userID: decode._id
-    })
-
-    res.status(200).json({ message: "Task deleted" })
 }

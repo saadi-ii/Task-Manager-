@@ -3,9 +3,10 @@ import cors from "cors"
 import columnRoute from "./routes/column.routes"
 import taskRoute from "./routes/task.routes"
 import subtaskRoute from "./routes/subtask.routes"
-import signUpRouter from "./routes/signup.routes"
+import userRouter from "./routes/user.routes"
 import boardRouter from "./routes/board.routes"
 import cookieParser from "cookie-parser"
+import authMiddleware from "./middleware/auth.middleware"
 
 const app: Application = express()
 
@@ -18,10 +19,10 @@ app.use(express.json())
 app.use(cookieParser())
 
 
-app.use("/signup", signUpRouter)
-app.use("/board", boardRouter)
-app.use("/column", columnRoute)
-app.use("/task", taskRoute)
-app.use("/subtask", subtaskRoute)
+app.use("/user", userRouter)
+app.use("/board", authMiddleware, boardRouter)
+app.use("/column", authMiddleware, columnRoute)
+app.use("/task", authMiddleware, taskRoute)
+app.use("/subtask", authMiddleware, subtaskRoute)
 
 export default app

@@ -4,25 +4,36 @@ import { useRef, useState } from "react";
 import { FiArrowRightCircle } from "react-icons/fi";
 import { moveTask } from "@/lib/api/task/move";
 import { Column } from "@/lib/types/column.types";
+import { Task } from "@/lib/types/task.types";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface MoveTaskProps {
-  taskname: string;
+  taskId: string;
+  taskName: string;
   currentColumnId: string;
   columns: Column[];
+  tasks: Task[];
   onSuccess: () => void;
 }
 
-export const MoveTask = ({ taskname, currentColumnId, columns, onSuccess }: MoveTaskProps) => {
+export const MoveTask = ({ taskId, taskName, currentColumnId, columns, tasks, onSuccess }: MoveTaskProps) => {
   const [visible, setVisible] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   useClickOutside(panelRef, () => setVisible(false));
 
-  const otherColumns = columns.filter((column) => column._id !== currentColumnId);
+  const columnsWithSameName = new Set(
+    tasks
+      .filter((task) => task._id !== taskId && task.taskname === taskName)
+      .map((task) => task.columnid)
+  );
+
+  const otherColumns = columns.filter(
+    (column) => column._id !== currentColumnId && !columnsWithSameName.has(column._id)
+  );
 
   const handleMove = async (columnid: string) => {
     try {
-      await moveTask({ taskname, columnid });
+      await moveTask({ taskid: taskId, columnid });
       setVisible(false);
       onSuccess();
     } catch (error) {

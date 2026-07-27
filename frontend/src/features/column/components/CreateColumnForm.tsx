@@ -22,7 +22,7 @@ export const CreateColumnForm = ({ boardid }: CreateColumnFormProps) => {
       router.back();
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      alert(err.response?.data?.message);
+      alert(err.response?.data?.message ?? "Something went wrong");
     }
   };
 

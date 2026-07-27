@@ -18,10 +18,10 @@ export const Column = ({ column, columns, tasks, onTasksChanged, onDeleted }: Co
   const tasksInColumn = tasks.filter((task) => task.columnid === column._id);
 
   return (
-    <div className="w-70 min-w-70 bg-gray-100 h-fit max-h-full p-2 rounded-2xl flex flex-col gap-2">
+    <div className="w-70 min-w-70 bg-gray-100 max-h-full p-2 rounded-2xl flex flex-col gap-2">
       <header className="flex justify-between items-center">
         <div className="bg-gray-300 w-fit px-2 py-1 rounded-lg text-sm flex items-center justify-center">
-          <div>{column.columnname}</div>
+          <div className="max-w-40 truncate">{column.columnname}</div>
         </div>
         <div className="flex items-center justify-center gap-1">
           <AddTask columnid={column._id} onSuccess={onTasksChanged} />
@@ -30,7 +30,7 @@ export const Column = ({ column, columns, tasks, onTasksChanged, onDeleted }: Co
       </header>
       <main className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">
         {tasksInColumn.map((task) => (
-          <TaskCard key={task._id} task={task} columns={columns} onChanged={onTasksChanged} />
+          <TaskCard key={task._id} task={task} columns={columns} tasks={tasks} onChanged={onTasksChanged} />
         ))}
       </main>
       <footer>

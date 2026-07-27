@@ -28,11 +28,10 @@ export const ColumnList = ({ boardid }: ColumnListProps) => {
   useEffect(() => {
     fetchColumns();
     fetchTasks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardid]);
 
   return (
-    <div className="flex flex-1 gap-5 pl-35 p-5 overflow-x-auto overflow-y-hidden">
+    <div className="flex flex-1 gap-5 min-h-0 p-5 overflow-x-auto overflow-y-hidden">
       {columns.map((column) => (
         <Column
           key={column._id}

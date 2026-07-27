@@ -9,6 +9,18 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images:{
+      remotePatterns:[
+        {
+          protocol:"https",
+          hostname:"cdn.iconscout.com"
+        },
+        {
+          protocol:"https",
+          hostname:"plus.unsplash.com"
+        }
+      ]
+    }
 };
 
 export default nextConfig;

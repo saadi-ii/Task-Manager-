@@ -18,10 +18,11 @@ import { SubtaskCard } from "@/features/subtask/components/SubtaskCard";
 interface TaskCardProps {
   task: Task;
   columns: Column[];
+  tasks: Task[];
   onChanged: () => void;
 }
 
-export const TaskCard = ({ task, columns, onChanged }: TaskCardProps) => {
+export const TaskCard = ({ task, columns, tasks, onChanged }: TaskCardProps) => {
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
   const [subtasksVisible, setSubtasksVisible] = useState(false);
 
@@ -41,9 +42,11 @@ export const TaskCard = ({ task, columns, onChanged }: TaskCardProps) => {
         <ItemName name={task.taskname} />
         <div className="flex gap-0.5 border rounded-lg p-1 border-gray-300">
           <MoveTask
-            taskname={task.taskname}
+            taskId={task._id}
+            taskName={task.taskname}
             currentColumnId={task.columnid}
             columns={columns}
+            tasks={tasks}
             onSuccess={onChanged}
           />
           <AddSubtask taskid={task._id} onSuccess={fetchSubtasks} />

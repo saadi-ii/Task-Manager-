@@ -27,7 +27,7 @@ export const AddTask = ({ columnid, label, onSuccess }: AddTaskProps) => {
       onSuccess();
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      alert(err.response?.data?.message);
+      alert(err.response?.data?.message ?? "Something went wrong");
     }
   };
 
@@ -44,7 +44,7 @@ export const AddTask = ({ columnid, label, onSuccess }: AddTaskProps) => {
       <form
         ref={panelRef}
         onSubmit={handleSubmit}
-        className={`${visible ? "visible" : "hidden"} absolute right-1 top-10 bg-gray-300 flex flex-col justify-center items-center rounded-2xl p-2 text-xl gap-2 z-10`}
+        className={`${visible ? "visible" : "hidden"} z-20 absolute right-1 top-10 bg-gray-300 flex flex-col justify-center items-center rounded-2xl p-2 text-xl gap-2 z-10`}
       >
         <label htmlFor="taskname">Create Task</label>
         <input

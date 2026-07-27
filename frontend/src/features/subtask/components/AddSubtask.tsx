@@ -26,7 +26,7 @@ export const AddSubtask = ({ taskid, onSuccess }: AddSubtaskProps) => {
       onSuccess();
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      alert(err.response?.data?.message);
+      alert(err.response?.data?.message ?? "Something went wrong");
     }
   };
 
