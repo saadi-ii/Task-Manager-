@@ -45,16 +45,16 @@ export const RenameButton = (props: RenameButtonProps) => {
       <form
         ref={panelRef}
         onSubmit={handleSubmit}
-        className={`${visible ? "visible" : "hidden"} bg-gray-200 p-2 rounded-2xl z-20 absolute top-5 right-0 flex flex-col justify-center items-center`}
+        className={`${visible ? "visible" : "hidden"} bg-muted p-2 rounded-2xl z-20 absolute top-5 right-0 flex flex-col justify-center items-center`}
       >
         <input
           type="text"
           name="rename"
           id="rename"
           placeholder="Rename"
-          className="border px-2 rounded-xl border-gray-600 w-20 flex justify-center items-center"
+          className="border px-2 rounded-xl border-border w-20 flex justify-center items-center"
         />
-        <input type="submit" value="Submit" className="rounded-xl bg-gray-600 w-fit px-2 text-white mt-1" />
+        <input type="submit" value="Submit" className="rounded-xl bg-foreground w-fit px-2 text-background mt-1" />
       </form>
     </div>
   );

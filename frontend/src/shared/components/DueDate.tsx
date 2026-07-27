@@ -56,10 +56,10 @@ export const DueDate = (props: DueDateProps) => {
   };
 
   return (
-    <div className="border rounded-lg p-0.5 border-gray-400 relative">
+    <div className="border rounded-lg p-0.5 border-border relative">
       <div>
         {date === "" ? (
-          <FiCalendar className="text-gray-600" onClick={() => setVisible(true)} />
+          <FiCalendar className="text-muted-foreground" onClick={() => setVisible(true)} />
         ) : (
           <div className="text-xs" onClick={() => setVisible(true)}>
             {date}
@@ -69,10 +69,10 @@ export const DueDate = (props: DueDateProps) => {
       <form
         onSubmit={handleSubmit}
         ref={panelRef}
-        className={`${visible ? "visible" : "hidden"} absolute bg-gray-200 rounded-2xl p-5 flex flex-col z-20 justify-center items-center`}
+        className={`${visible ? "visible" : "hidden"} absolute bg-muted rounded-2xl p-5 flex flex-col z-20 justify-center items-center`}
       >
         <input type="date" name="datetime" id="datetime" />
-        <input type="submit" value="Submit" className="rounded-xl bg-gray-600 w-fit px-2 text-white mt-1" />
+        <input type="submit" value="Submit" className="rounded-xl bg-foreground w-fit px-2 text-background mt-1" />
       </form>
     </div>
   );

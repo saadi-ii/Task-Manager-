@@ -1,11 +1,11 @@
 import { BoardNavbar } from "@/features/board/components/BoardNavbar";
-import { CreateBoardForm } from "@/features/board/components/CreateBoardForm";
+import { BoardList } from "@/features/board/components/BoardList";
 
 export default function Page() {
   return (
     <div>
       <BoardNavbar />
-      <CreateBoardForm />
+      <BoardList />
     </div>
   );
 }

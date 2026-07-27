@@ -7,6 +7,7 @@ import { AddTask } from "@/features/task/components/AddTask";
 import { TaskCard } from "@/features/task/components/TaskCard";
 
 interface ColumnProps {
+  boardid: string,
   column: ColumnType;
   columns: ColumnType[];
   tasks: Task[];
@@ -14,27 +15,27 @@ interface ColumnProps {
   onDeleted: () => void;
 }
 
-export const Column = ({ column, columns, tasks, onTasksChanged, onDeleted }: ColumnProps) => {
+export const Column = ({ boardid,column, columns, tasks, onTasksChanged, onDeleted }: ColumnProps) => {
   const tasksInColumn = tasks.filter((task) => task.columnid === column._id);
 
   return (
-    <div className="w-70 min-w-70 bg-gray-100 max-h-full p-2 rounded-2xl flex flex-col gap-2">
+    <div className="w-70 min-w-70 bg-muted max-h-full p-2 rounded-2xl flex flex-col gap-2">
       <header className="flex justify-between items-center">
-        <div className="bg-gray-300 w-fit px-2 py-1 rounded-lg text-sm flex items-center justify-center">
+        <div className="bg-secondary text-secondary-foreground w-fit px-2 py-1 rounded-lg text-sm flex items-center justify-center">
           <div className="max-w-40 truncate">{column.columnname}</div>
         </div>
         <div className="flex items-center justify-center gap-1">
-          <AddTask columnid={column._id} onSuccess={onTasksChanged} />
+          <AddTask boardid={boardid} columnid={column._id} onSuccess={onTasksChanged} />
           <DeleteButton mode="column" columnname={column.columnname} boardid={column.boardid} onSuccess={onDeleted} />
         </div>
       </header>
       <main className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">
         {tasksInColumn.map((task) => (
-          <TaskCard key={task._id} task={task} columns={columns} tasks={tasks} onChanged={onTasksChanged} />
+          <TaskCard boardid={boardid} key={task._id} task={task} columns={columns} tasks={tasks} onChanged={onTasksChanged} />
         ))}
       </main>
       <footer>
-        <AddTask columnid={column._id} label="Add Task" onSuccess={onTasksChanged} />
+        <AddTask boardid={boardid} columnid={column._id} label="Add Task" onSuccess={onTasksChanged} />
       </footer>
     </div>
   );

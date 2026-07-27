@@ -50,10 +50,10 @@ export const DeleteButton = (props: DeleteButtonProps) => {
       />
       <div
         ref={panelRef}
-        className={`${visible ? "visible" : "hidden"} p-1 w-40 absolute top-7 right-0 rounded-2xl flex flex-col justify-center items-center border border-gray-400 bg-gray-100 z-10`}
+        className={`${visible ? "visible" : "hidden"} p-1 w-40 absolute top-7 right-0 rounded-2xl flex flex-col justify-center items-center border border-border bg-muted z-10`}
       >
         <div className="text-xl">Are You Sure</div>
-        <button onClick={handleDelete} className="bg-red-700 text-xl text-white rounded-2xl px-2">
+        <button onClick={handleDelete} className="bg-destructive text-xl text-destructive-foreground rounded-2xl px-2">
           Delete
         </button>
       </div>

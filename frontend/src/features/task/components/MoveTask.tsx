@@ -46,20 +46,20 @@ export const MoveTask = ({ taskId, taskName, currentColumnId, columns, tasks, on
       <FiArrowRightCircle onClick={() => setVisible((v) => !v)} />
       <div
         ref={panelRef}
-        className={`${visible ? "visible" : "hidden"} absolute top-6 right-0 bg-gray-500 text-white w-40 flex flex-col rounded-xl p-2 z-20 gap-1`}
+        className={`${visible ? "visible" : "hidden"} absolute top-6 right-0 bg-primary text-primary-foreground w-40 flex flex-col rounded-xl p-2 z-20 gap-1`}
       >
         {otherColumns.length > 0 ? (
           otherColumns.map((column) => (
             <div
               key={column._id}
-              className="cursor-pointer hover:bg-gray-600 rounded px-1"
+              className="cursor-pointer hover:bg-foreground rounded px-1"
               onClick={() => handleMove(column._id)}
             >
               {column.columnname}
             </div>
           ))
         ) : (
-          <div className="text-gray-300">No other columns</div>
+          <div className="text-muted-foreground">No other columns</div>
         )}
       </div>
     </div>

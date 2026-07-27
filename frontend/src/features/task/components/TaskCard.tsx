@@ -16,13 +16,14 @@ import { AddSubtask } from "@/features/subtask/components/AddSubtask";
 import { SubtaskCard } from "@/features/subtask/components/SubtaskCard";
 
 interface TaskCardProps {
+  boardid:string,
   task: Task;
   columns: Column[];
   tasks: Task[];
   onChanged: () => void;
 }
 
-export const TaskCard = ({ task, columns, tasks, onChanged }: TaskCardProps) => {
+export const TaskCard = ({ boardid,task, columns, tasks, onChanged }: TaskCardProps) => {
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
   const [subtasksVisible, setSubtasksVisible] = useState(false);
 
@@ -37,10 +38,10 @@ export const TaskCard = ({ task, columns, tasks, onChanged }: TaskCardProps) => 
   const subtasksForTask = subtasks.filter((subtask) => subtask.taskid === task._id);
 
   return (
-    <div className="bg-white h-fit p-2 rounded-2xl flex flex-col gap-2">
+    <div className="bg-card text-card-foreground h-fit p-2 rounded-2xl flex flex-col gap-2">
       <header className="flex justify-between items-center">
         <ItemName name={task.taskname} />
-        <div className="flex gap-0.5 border rounded-lg p-1 border-gray-300">
+        <div className="flex gap-0.5 border rounded-lg p-1 border-border">
           <MoveTask
             taskId={task._id}
             taskName={task.taskname}
@@ -49,7 +50,7 @@ export const TaskCard = ({ task, columns, tasks, onChanged }: TaskCardProps) => 
             tasks={tasks}
             onSuccess={onChanged}
           />
-          <AddSubtask taskid={task._id} onSuccess={fetchSubtasks} />
+          <AddSubtask boardid={boardid} taskid={task._id} onSuccess={fetchSubtasks} />
           <RenameButton mode="task" taskname={task.taskname} onSuccess={onChanged} />
           <DeleteButton mode="task" taskname={task.taskname} columnid={task.columnid} onSuccess={onChanged} />
         </div>
@@ -62,7 +63,7 @@ export const TaskCard = ({ task, columns, tasks, onChanged }: TaskCardProps) => 
 
       <footer className="flex items-center gap-2">
         <SubtaskIcon />
-        <div className="text-gray-600 cursor-pointer" onClick={() => setSubtasksVisible((v) => !v)}>
+        <div className="text-muted-foreground cursor-pointer" onClick={() => setSubtasksVisible((v) => !v)}>
           subtask
         </div>
       </footer>

@@ -4,27 +4,44 @@ import { FormEvent, useRef, useState } from "react";
 import { AxiosError } from "axios";
 import { FaPlus } from "react-icons/fa6";
 import { createTask } from "@/lib/api/task/create";
-import { useClickOutside } from "@/hooks/useClickOutside";
+
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Field, FieldGroup } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useRouter } from "next/navigation";
+
 
 interface AddTaskProps {
+  boardid: string;
   columnid: string;
   label?: string;
   onSuccess: () => void;
 }
 
-export const AddTask = ({ columnid, label, onSuccess }: AddTaskProps) => {
-  const [visible, setVisible] = useState(false);
-  const panelRef = useRef<HTMLFormElement>(null);
-  useClickOutside(panelRef, () => setVisible(false));
-
+export const AddTask = ({ boardid,columnid, label, onSuccess }: AddTaskProps) => {
+  const router = useRouter()
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("kjsjdfhksd");
+
     const taskname = new FormData(e.currentTarget).get("taskname") as string;
+    console.log(taskname);
 
     try {
       await createTask({ columnid, taskname });
-      setVisible(false);
       onSuccess();
+      router.push(boardid)
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       alert(err.response?.data?.message ?? "Something went wrong");
@@ -33,29 +50,32 @@ export const AddTask = ({ columnid, label, onSuccess }: AddTaskProps) => {
 
   return (
     <div
-      className="py-2 flex items-center relative"
-      onClick={(e) => {
-        setVisible(true);
-        e.stopPropagation();
-      }}
-    >
-      <FaPlus className="text-gray-600 size-5" />
-      <div className="text-gray-600">{label}</div>
-      <form
-        ref={panelRef}
-        onSubmit={handleSubmit}
-        className={`${visible ? "visible" : "hidden"} z-20 absolute right-1 top-10 bg-gray-300 flex flex-col justify-center items-center rounded-2xl p-2 text-xl gap-2 z-10`}
-      >
-        <label htmlFor="taskname">Create Task</label>
-        <input
-          type="text"
-          name="taskname"
-          id="taskname"
-          placeholder="Task Name"
-          className="border-2 w-60 py-1 px-3 rounded-2xl"
-        />
-        <input type="submit" value="Submit" id="submit" className="bg-gray-700 w-fit py-2 px-5 text-white rounded-lg text-2xl" />
-      </form>
+      className="py-2 flex items-center relative">
+      <Dialog>
+        <DialogTrigger render={<Button variant="outline" className={`rounded-full`}><FaPlus className="text-muted-foreground size-5" /></Button>} />
+        <DialogContent className="sm:max-w-sm">
+          <form onSubmit={handleSubmit}>
+            <DialogHeader>
+              <DialogTitle>Edit profile</DialogTitle>
+              <DialogDescription>
+                Add Task
+              </DialogDescription>
+            </DialogHeader>
+            <FieldGroup>
+              <Field>
+                <Label htmlFor="taskname">Task Name</Label>
+                <Input id="taskname" name="taskname" defaultValue="Task 1" />
+              </Field>
+            </FieldGroup>
+            <DialogFooter>
+              <DialogClose render={<Button variant="outline">Cancel</Button>} />
+              <DialogClose render={<Button variant="outline" type="submit">Create</Button>} />
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <div className="text-muted-foreground">{label}</div>
     </div>
   );
 };
+

@@ -55,22 +55,22 @@ export const Priority = (props: PriorityProps) => {
   };
 
   return (
-    <div className="border rounded-lg p-0.5 border-gray-400 relative">
-      <FiFlag className="text-gray-600" onClick={() => setVisible((v) => !v)} />
+    <div className="border rounded-lg p-0.5 border-border relative">
+      <FiFlag className="text-muted-foreground" onClick={() => setVisible((v) => !v)} />
       {priority !== "" && (
-        <div className="rounded-xl bg-gray-600 w-fit px-2 left-6 bottom-0 text-white mt-1 absolute">{priority}</div>
+        <div className="rounded-xl bg-muted-foreground w-fit px-2 left-6 bottom-0 text-background mt-1 absolute">{priority}</div>
       )}
       <form
         onSubmit={handleSubmit}
         ref={panelRef}
-        className={`${visible ? "visible" : "hidden"} absolute left-5 top-2 bg-gray-500 text-white w-30 flex flex-col rounded-xl p-2 z-10`}
+        className={`${visible ? "visible" : "hidden"} absolute left-5 top-2 bg-primary text-primary-foreground w-30 flex flex-col rounded-xl p-2 z-10`}
       >
         {PRIORITY_OPTIONS.map((option) => (
           <div key={option}>
             <input type="radio" name="option" id={option} value={option} /> <label htmlFor={option}>{option}</label>
           </div>
         ))}
-        <input type="submit" value="Submit" className="rounded-xl bg-gray-600 w-fit px-2 text-white mt-1" />
+        <input type="submit" value="Submit" className="rounded-xl bg-foreground w-fit px-2 text-background mt-1" />
       </form>
     </div>
   );

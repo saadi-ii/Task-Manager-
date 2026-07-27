@@ -28,7 +28,7 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
         }}
          className="fixed left-0 top-14 z-50 flex items-start pointer-events-none  ">
       < nav
-        className="pointer-events-auto flex flex-col items-center w-50 max-sm:w-40 h-[calc(100vh-3.5rem)] bg-slate-600 text-white text-2xl py-10 gap-10 p-5"
+        className="pointer-events-auto flex flex-col items-center w-50 max-sm:w-40 h-[calc(100vh-3.5rem)] bg-primary text-primary-foreground text-2xl py-10 gap-10 p-5"
       >
         <div>
           <Image
@@ -39,7 +39,7 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
           />
         </div>
 
-        <div className="after:content-[''] after:block  after:w-30 after:h-1 after:bg-white after:ml-0.5 after:rounded-2xl" />
+        <div className="after:content-[''] after:block  after:w-30 after:h-1 after:bg-primary-foreground after:ml-0.5 after:rounded-2xl" />
 
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
@@ -53,6 +53,17 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
               Home
             </Link>
           </div>
+          <div className="flex items-center gap-2">
+            <TbArrowBadgeRightFilled
+              className={`size-5 ${
+                active === "board" ? "visible" : "invisible"
+              }`}
+            />
+
+            <Link href="/board" onClick={() => setActive("board")}>
+              Boards
+            </Link>
+          </div>
 
         </div>
       </nav>
@@ -61,8 +72,11 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
         onClick={() => setIsOpen((prev) => !prev)}
         className="pointer-events-auto ml-2 mt-4"
       >
-        <RxHamburgerMenu className="text-slate-600 size-8 cursor-pointer" />
+        <RxHamburgerMenu className="text-primary size-8 cursor-pointer" />
       </button>
     </motion.div>
   );
 };
+
+
+

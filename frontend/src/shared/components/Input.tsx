@@ -10,7 +10,7 @@ export const Input = ({ type, name, id, placeholder, value, defaultValue, onChan
       value={value}
       defaultValue={defaultValue}
       onChange={onChange}
-      className={`border-2 ${type === "submit" ? "text-white" : "text-gray-800"} py-1 px-3 rounded-2xl ${type === "submit" ? "bg-gray-900" : ""}`}
+      className={`border-2 ${type === "submit" ? "text-background" : "text-foreground"} py-1 px-3 rounded-2xl ${type === "submit" ? "bg-foreground" : ""}`}
     />
   );
 };

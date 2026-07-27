@@ -15,10 +15,10 @@ interface SubtaskCardProps {
 
 export const SubtaskCard = ({ subtask, onChanged }: SubtaskCardProps) => {
   return (
-    <div className="bg-gray-50 h-fit p-2 rounded-2xl flex flex-col gap-2 m-2">
+    <div className="bg-card text-card-foreground h-fit p-2 rounded-2xl flex flex-col gap-2 m-2">
       <header className="flex justify-between items-center">
         <ItemName name={subtask.subtaskname} />
-        <div className="flex gap-0.5 border rounded-lg p-1 border-gray-300">
+        <div className="flex gap-0.5 border rounded-lg p-1 border-border">
           <RenameButton mode="subtask" taskid={subtask.taskid} subtaskname={subtask.subtaskname} onSuccess={onChanged} />
           <DeleteButton mode="subtask" subtaskname={subtask.subtaskname} taskid={subtask.taskid} onSuccess={onChanged} />
         </div>
@@ -29,7 +29,7 @@ export const SubtaskCard = ({ subtask, onChanged }: SubtaskCardProps) => {
       </main>
       <footer className="flex items-center gap-2">
         <SubtaskIcon />
-        <div className="text-gray-600">subtask</div>
+        <div className="text-muted-foreground">subtask</div>
       </footer>
     </div>
   );

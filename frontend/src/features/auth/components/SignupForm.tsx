@@ -4,9 +4,21 @@ import { FormEvent } from "react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { signup } from "@/lib/api/auth/signup";
-import { Input } from "@/shared/components/Input";
-import Image from "next/image";
-import Link from "next/link";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SigninForm } from "@/features/auth/components/Signin";
 
 export const SignupForm = () => {
   const router = useRouter();
@@ -22,7 +34,7 @@ export const SignupForm = () => {
       await signup({ username, email, password });
       window.dispatchEvent(new Event("auth-changed"));
       alert("Welcome");
-      router.replace("/");
+      router.push("/board");
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       alert(err.response?.data?.message ?? "Something went wrong");
@@ -30,29 +42,57 @@ export const SignupForm = () => {
   };
 
   return (
-    <div className='flex justify-center items-center p-5 b-2 rounded-2xl text-slate-600 text-2xl h-screen gap-2'>
-      <div className="h-150 w-screen flex flex-col justify-center items-center">
-        <div className="text-3xl font-bold">SigUp</div>
-        <form
-          onSubmit={handleSubmit}
-          className="w-fit h-fit left-0 flex flex-col justify-center items-center border-2 border-gray-200 rounded-2xl p-5 text-xl gap-2"
-        >
-          <Input type="text" name="username" id="username" placeholder="Name" />
-          <Input type="text" name="email" id="email" placeholder="Email" />
-          <Input type="password" name="password" id="password" placeholder="Password" />
-          <Input type="submit" value="Submit" />
-        </form>
-        <Link href={"./signin"}>Already Have an account</Link>
-      </div>
-      <div className='w-2/3 '>
-        <Image
-          src="https://plus.unsplash.com/premium_photo-1720428645118-eaf237cbaed1?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bG9naW4lMjBkZXNpZ24lMjBwb3J0cmFpdHxlbnwwfHwwfHx8MA%3D%3D"
-          alt="Logo"
-          width={1000}
-          height={1000}
-          className="w-full h-auto"
-        />
-      </div>
-    </div>
+    <DialogContent className="sm:max-w-sm">
+      <form onSubmit={handleSubmit}>
+        <DialogHeader>
+          <DialogTitle>SignUp</DialogTitle>
+          <DialogDescription>
+            Enter your credentials to continue.
+          </DialogDescription>
+        </DialogHeader>
+
+        <FieldGroup className="my-4">
+          <Field>
+            <Label htmlFor="username">Username or email</Label>
+            <Input id="username" name="username" />
+          </Field>
+          <Field>
+            <Label htmlFor="email">Username or email</Label>
+            <Input id="email" name="email" />
+          </Field>
+
+          <Field>
+            <Label htmlFor="password">Password</Label>
+            <Input id="password" name="password" type="password" />
+          </Field>
+
+          Already Have an Account
+          <Dialog>
+            <Dialog>
+              <DialogTrigger
+                render={<Button variant="outline">Signin</Button>}
+              />
+              <SigninForm />
+            </Dialog>
+          </Dialog>
+        </FieldGroup>
+
+        <DialogFooter>
+          <DialogClose
+            render={
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            }
+          />
+          <DialogClose
+            render={
+              <Button type="submit">SignUp</Button>
+            }
+          />
+          
+        </DialogFooter>
+      </form>
+    </DialogContent>
   );
 };
