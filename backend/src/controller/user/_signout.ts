@@ -11,7 +11,7 @@ export const _signout = async(req:Request, res:Response):Promise<void> => {
     const isProd = process.env.NODE_ENV === "production"
     res.clearCookie("token", {
         httpOnly: true,
-        sameSite: isProd ? "none" : "lax",
+        sameSite: "lax",
         secure: isProd,
         path: "/",
     });
