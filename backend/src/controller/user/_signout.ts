@@ -8,6 +8,12 @@ dotenv.config()
 
 
 export const _signout = async(req:Request, res:Response):Promise<void> => {
-    res.clearCookie("token");
+    const isProd = process.env.NODE_ENV === "production"
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: isProd ? "none" : "lax",
+        secure: isProd,
+        path: "/",
+    });
     res.status(201).json({message:"Logout Successfully"})
 }

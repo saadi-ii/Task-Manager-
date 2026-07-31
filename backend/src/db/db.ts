@@ -3,13 +3,17 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-const connectDB = async (): Promise<void> => {
-    try {
+let cachedPromise: Promise<typeof mongoose> | null = null
+
+const connectDB = (): Promise<typeof mongoose> => {
+    if (!cachedPromise) {
         const mongoURI = process.env.MONGODB_URI as string
-        await mongoose.connect(mongoURI)
-    } catch {
-        process.exit(1)
+        cachedPromise = mongoose.connect(mongoURI).catch((err) => {
+            cachedPromise = null
+            throw err
+        })
     }
+    return cachedPromise
 }
 
 export default connectDB

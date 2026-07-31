@@ -30,10 +30,11 @@ export const _signin = async (req: Request, res: Response): Promise<void> => {
         _id: isUserExist._id,
     }, process.env.JWT_SECRET as string)
 
+    const isProd = process.env.NODE_ENV === "production"
     res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "lax",
-        secure: false,
+        sameSite: isProd ? "none" : "lax",
+        secure: isProd,
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000
     })
