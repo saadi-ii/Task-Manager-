@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 interface AddSubtaskProps {
   boardid: string;
@@ -38,7 +39,7 @@ export const AddSubtask = ({ boardid,taskid, onSuccess }: AddSubtaskProps) => {
       onSuccess();
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      alert(err.response?.data?.message ?? "Something went wrong");
+      toast.error(err.response?.data?.message ?? "Something went wrong");
     }
   };
 
@@ -46,7 +47,10 @@ export const AddSubtask = ({ boardid,taskid, onSuccess }: AddSubtaskProps) => {
     <div
       className="flex items-center relative">
       <Dialog>
-        <DialogTrigger render={<Button variant="outline" className={`rounded-full w-4 h-4`}><FaPlus className="text-muted-foreground size-3" /></Button>} />
+        <DialogTrigger render={<button className={`flex justify-center items-center  text-gray-600 hover:text-black`}>
+          <FaPlus className="text-muted-foreground size-3" />
+          <div className="text-black text-sm">Subtask</div>
+        </button>} />
         <DialogContent className="sm:max-w-sm">
           <form onSubmit={handleSubmit}>
             <DialogHeader>

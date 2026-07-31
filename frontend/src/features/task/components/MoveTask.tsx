@@ -31,19 +31,20 @@ export const MoveTask = ({ taskId, taskName, currentColumnId, columns, tasks, on
     (column) => column._id !== currentColumnId && !columnsWithSameName.has(column._id)
   );
 
-  const handleMove = async (columnid: string) => {
+  const handleMove = async (columnid: string, columnname: string) => {
     try {
-      await moveTask({ taskid: taskId, columnid });
+      await moveTask({ taskid: taskId, columnid, columnname });
       setVisible(false);
       onSuccess();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // no-op
     }
   };
 
   return (
-    <div className="relative">
-      <FiArrowRightCircle onClick={() => setVisible((v) => !v)} />
+    <div  onClick={() => setVisible((v) => !v)}  className="relative flex justify-center items-center text-sm text-gray-600 hover:text-black">
+      <FiArrowRightCircle/>
+        <div>Move</div>
       <div
         ref={panelRef}
         className={`${visible ? "visible" : "hidden"} absolute top-6 right-0 bg-primary text-primary-foreground w-40 flex flex-col rounded-xl p-2 z-20 gap-1`}
@@ -53,7 +54,7 @@ export const MoveTask = ({ taskId, taskName, currentColumnId, columns, tasks, on
             <div
               key={column._id}
               className="cursor-pointer hover:bg-foreground rounded px-1"
-              onClick={() => handleMove(column._id)}
+              onClick={() => handleMove(column._id, column.columnname)}
             >
               {column.columnname}
             </div>

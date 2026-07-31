@@ -5,6 +5,7 @@ import { GoPencil } from "react-icons/go";
 import { renameTask } from "@/lib/api/task/rename";
 import { renameSubtask } from "@/lib/api/subtask/rename";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { toast } from "sonner";
 
 type RenameButtonProps =
   | { mode: "task"; taskname: string; onSuccess: () => void }
@@ -22,7 +23,7 @@ export const RenameButton = (props: RenameButtonProps) => {
     const newName = new FormData(e.currentTarget).get("rename") as string;
 
     if (newName === currentName) {
-      alert("New name is same as the original");
+      toast.error("New name is same as the original");
       return;
     }
 
@@ -35,13 +36,15 @@ export const RenameButton = (props: RenameButtonProps) => {
       setVisible(false);
       props.onSuccess();
     } catch (error) {
-      console.error(error);
+      const err = error as { message?: string };
+      toast.error(err?.message ?? "Rename failed");
     }
   };
 
   return (
-    <div className="relative">
-      <GoPencil onClick={() => setVisible(true)} />
+    <div  onClick={() => setVisible(true)}  className="relative flex justify-center items-center text-sm  text-gray-600 hover:text-black">
+      <GoPencil/>
+        <div>Rename</div>
       <form
         ref={panelRef}
         onSubmit={handleSubmit}

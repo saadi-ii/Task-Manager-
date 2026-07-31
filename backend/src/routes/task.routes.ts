@@ -2,6 +2,7 @@ import { Router } from "express"
 import {
     _create,
     _get,
+    _getAll,
     _markCompletion,
     _rename,
     _priority,
@@ -9,12 +10,13 @@ import {
     _date,
     _getDate,
     _delete
-} from "../controller/task.controller"
+} from "../controller/task/task.controller"
 
 const router: Router = Router()
 
 router.post("/create",_create)
 router.get("/get",_get)
+router.get("/getall",_getAll)
 router.patch("/markcompletion",_markCompletion)
 router.patch("/rename",_rename)
 router.patch("/priority",_priority)

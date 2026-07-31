@@ -1,12 +1,14 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { FiCalendar } from "react-icons/fi";
 import { getTaskDate } from "@/lib/api/task/getDate";
 import { setTaskDate } from "@/lib/api/task/date";
 import { getSubtaskDate } from "@/lib/api/subtask/getDate";
 import { setSubtaskDate } from "@/lib/api/subtask/date";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { toast } from "sonner";
+import { todayYMD } from "@/lib/utils/date";
 
 type DueDateProps =
   | { mode: "task"; taskname: string; columnid: string }
@@ -15,8 +17,10 @@ type DueDateProps =
 export const DueDate = (props: DueDateProps) => {
   const [visible, setVisible] = useState(false);
   const [date, setDate] = useState("");
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLFormElement>(null);
-  useClickOutside(panelRef, () => setVisible(false));
+  useClickOutside(panelRef, () => setVisible(false), triggerRef);
 
   const key = props.mode === "task" ? props.taskname : props.subtaskname;
 
@@ -27,20 +31,29 @@ export const DueDate = (props: DueDateProps) => {
           ? await getTaskDate(props.taskname, props.columnid)
           : await getSubtaskDate(props.subtaskname, props.taskid);
       setDate(res.data);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // no-op
     }
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
+
+  useLayoutEffect(() => {
+    if (!visible || !triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    setCoords({ top: rect.bottom + 4, left: rect.left });
+  }, [visible]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newDate = new FormData(e.currentTarget).get("datetime") as string;
+
+    if (newDate && newDate < todayYMD()) {
+      toast.error("Due date cannot be in the past");
+      return;
+    }
 
     try {
       if (props.mode === "task") {
@@ -50,30 +63,31 @@ export const DueDate = (props: DueDateProps) => {
       }
       setVisible(false);
       fetchDate();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // no-op
     }
   };
 
   return (
-    <div className="border rounded-lg p-0.5 border-border relative">
-      <div>
+    <div className="border rounded-lg p-0.5 border-border">
+      <div ref={triggerRef} onClick={() => setVisible((v) => !v)} className="cursor-pointer">
         {date === "" ? (
-          <FiCalendar className="text-muted-foreground" onClick={() => setVisible(true)} />
+          <FiCalendar className="text-muted-foreground" />
         ) : (
-          <div className="text-xs" onClick={() => setVisible(true)}>
-            {date}
-          </div>
+          <div className="text-xs">{date}</div>
         )}
       </div>
-      <form
-        onSubmit={handleSubmit}
-        ref={panelRef}
-        className={`${visible ? "visible" : "hidden"} absolute bg-muted rounded-2xl p-5 flex flex-col z-20 justify-center items-center`}
-      >
-        <input type="date" name="datetime" id="datetime" />
-        <input type="submit" value="Submit" className="rounded-xl bg-foreground w-fit px-2 text-background mt-1" />
-      </form>
+      {visible && coords && (
+        <form
+          onSubmit={handleSubmit}
+          ref={panelRef}
+          style={{ top: coords.top, left: coords.left }}
+          className="fixed bg-muted rounded-2xl p-3 flex flex-col gap-2 z-50 shadow-lg border border-border"
+        >
+          <input type="date" name="datetime" id="datetime" min={todayYMD()} className="text-sm" />
+          <input type="submit" value="Submit" className="rounded-xl bg-foreground w-fit px-2 text-background text-sm cursor-pointer" />
+        </form>
+      )}
     </div>
   );
 };

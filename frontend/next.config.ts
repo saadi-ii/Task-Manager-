@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:7000/:path*",
+        destination: "http://localhost:7001/:path*",
       },
     ];
   },
@@ -18,7 +18,15 @@ const nextConfig: NextConfig = {
         {
           protocol:"https",
           hostname:"plus.unsplash.com"
-        }
+        },
+        {
+          protocol:"https",
+          hostname:"media.istockphoto.com"
+        },
+        {
+          protocol:"https",
+          hostname:"static.vecteezy.com"
+        },
       ]
     }
 };

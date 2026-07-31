@@ -188,6 +188,9 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -195,5 +198,23 @@
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+@keyframes pivot {
+  0% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(5deg);
   }
 }

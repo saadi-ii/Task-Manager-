@@ -5,6 +5,7 @@ import taskRoute from "./routes/task.routes"
 import subtaskRoute from "./routes/subtask.routes"
 import userRouter from "./routes/user.routes"
 import boardRouter from "./routes/board.routes"
+import commentRouter from "./routes/comment.routes"
 import cookieParser from "cookie-parser"
 import authMiddleware from "./middleware/auth.middleware"
 
@@ -24,5 +25,6 @@ app.use("/board", authMiddleware, boardRouter)
 app.use("/column", authMiddleware, columnRoute)
 app.use("/task", authMiddleware, taskRoute)
 app.use("/subtask", authMiddleware, subtaskRoute)
+app.use("/comment", authMiddleware, commentRouter)
 
 export default app

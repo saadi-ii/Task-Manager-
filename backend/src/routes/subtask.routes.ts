@@ -8,7 +8,7 @@ import {
     _date,
     _getDate,
     _delete
-} from "../controller/subtask.controller"
+} from "../controller/subtask/subtask.controller"
 
 const router: Router = Router()
 

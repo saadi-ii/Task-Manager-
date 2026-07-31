@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { _create, _get, _delete } from "../controller/board.controller"
+import { _create, _get, _delete } from "../controller/board/board.controller"
 
 const router: Router = Router()
 

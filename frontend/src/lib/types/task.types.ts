@@ -1,15 +1,22 @@
 export interface Task {
   _id: string;
   columnid: string;
+  columnname: string;
   taskname: string;
+  description:string;
   priority?: string;
   comment?: string;
   date?: string;
+  recurrence?: "once" | "daily" | "weekly" | "monthly" | "yearly";
 }
 
 export interface CreateTaskPayload {
   columnid: string;
   taskname: string;
+  columnname: string;
+  description:string;
+  newPriority:string;
+  deadLine:string;
 }
 
 export interface RenameTaskPayload {
@@ -20,6 +27,7 @@ export interface RenameTaskPayload {
 export interface MoveTaskPayload {
   taskid: string;
   columnid: string;
+  columnname: string;
 }
 
 export interface TaskPriorityPayload {

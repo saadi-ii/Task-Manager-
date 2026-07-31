@@ -2,6 +2,7 @@ export interface Column {
   _id: string;
   boardid: string;
   columnname: string;
+  isDefault?: boolean;
 }
 
 export interface CreateColumnPayload {

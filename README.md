@@ -26,7 +26,7 @@ A full-stack task management application with a Node.js/Express backend and a Re
    ```
 3. Create a `.env` file in the `backend` directory (you can use `.env.example` as a template):
    ```
-   PORT=7000
+   PORT=7001
    MONGODB_URI=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret
    ```

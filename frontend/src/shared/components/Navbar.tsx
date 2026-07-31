@@ -1,23 +1,18 @@
 "use client"
 
 import Link from "next/link";
-import { Climate_Crisis } from 'next/font/google'
 import { get } from "@/lib/api/auth/get"
 import { signout } from "@/lib/api/auth/signout"
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
-import { SigninForm } from "@/features/auth/components/Signin";
-import {SignupForm} from "@/features/auth/components/SignupForm"
+import { Sheet, SheetTrigger, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import { Menu } from "lucide-react";
 
-
-const geist = Climate_Crisis({
-  subsets: ['latin'],
-})
 
 export const Navbar = () => {
   const [user, setUser] = useState("");
+  const [open, setOpen] = useState(false);
   const router = useRouter()
 
   const fetchUser = () => {
@@ -27,6 +22,7 @@ export const Navbar = () => {
   };
   const signoutuser = () => {
     signout().then(() => setUser(""));
+    setOpen(false);
     router.push("/")
   };
 
@@ -37,46 +33,59 @@ export const Navbar = () => {
     return () => window.removeEventListener("auth-changed", onAuthChanged);
   }, []);
 
-  console.log(user);
+  const closeSheet = () => setOpen(false);
 
   return (
-    <div className="shrink-0 w-full z-30">
-      <nav className="flex w-full h-14 bg-muted text-primary text-2xl gap-10 justify-between px-10 items-center py-2">
-        <div>
-          <div className={`${geist.className} text-2xl max-sm:text-lg`}>Task <span className="text-foreground">M</span>anagement</div>
-        </div>
-        <div className={`flex gap-2 ${user == "" ? "visible" : "hidden"}`}>
-          <Dialog>
-            <Dialog>
-              <DialogTrigger
-                render={<Button variant="outline">SignUp</Button>}
-              />
-              <SignupForm />
-            </Dialog>
-          </Dialog>
-          <Dialog>
-            <Dialog>
-              <DialogTrigger
-                render={<Button variant="outline">Signin</Button>}
-              />
-              <SigninForm />
-            </Dialog>
-          </Dialog>
-        </div>
-        <div className={`flex items-center gap-2 ${user == "" ? "hidden" : "visible"}`}>
-          <Button onClick={signoutuser} variant={"outline"}>SignOut</Button>
-          <div className="text-primary bg-card rounded-full py-1 px-2  max-sm:text-lg max-w-50 truncate">{user}</div>
+    <div className="shrink-0 w-full">
+      <nav className="flex w-full h-14 bg-muted text-primary text-lg gap-10 justify-between px-10 items-center py-2">
+        <div className="flex gap-10 items-center">
+          <div className="text-2xl font-bold">
+            Task Management
+          </div>
+          <div className="flex justify-center items-center gap-3 font-semibold max-[800px]:hidden">
+            <Link href={"/"} className="py-1 px-2 hover:text-foreground transition-all">Home</Link>
+            <Link href={`${user == "" ? "/signin" : "/board"}`} className="py-1 px-2 hover:text-foreground transition-all">Dashboard</Link>
+          </div>
         </div>
 
+        <div className="max-[800px]:hidden">
+          <div className={`flex gap-2 ${user == "" ? "visible" : "hidden"}`}>
+            <Link href={"/signup"}><Button variant="outline">SignUp</Button></Link>
+            <Link href={"/signin"}><Button variant="outline">SignIn</Button></Link>
+          </div>
+          <div className={`flex items-center gap-2 ${user == "" ? "hidden" : "visible"}`}>
+            <Button onClick={signoutuser} variant={"outline"}>SignOut</Button>
+            <p>Welcome. {user}</p>
+          </div>
+        </div>
 
-
+        <div className="hidden max-[800px]:block">
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger
+              render={
+                <Button variant="outline" size="icon" aria-label="Open menu">
+                  <Menu />
+                </Button>
+              }
+            />
+            <SheetContent side="right" className="p-6">
+              <SheetTitle className="text-xl font-bold">Task Management</SheetTitle>
+              <div className="flex flex-col gap-3 font-semibold mt-4">
+                <Link href={"/"} onClick={closeSheet} className="py-1 px-2 hover:text-foreground transition-all">Home</Link>
+                <Link href={user == "" ? "/signin" : "/board"} onClick={closeSheet} className="py-1 px-2 hover:text-foreground transition-all">Dashboard</Link>
+              </div>
+              <div className={`flex flex-col gap-2 mt-4 ${user == "" ? "" : "hidden"}`}>
+                <Link href={"/signup"} onClick={closeSheet}><Button variant="outline" className="w-full">SignUp</Button></Link>
+                <Link href={"/signin"} onClick={closeSheet}><Button variant="outline" className="w-full">SignIn</Button></Link>
+              </div>
+              <div className={`flex flex-col items-start gap-2 mt-4 ${user == "" ? "hidden" : ""}`}>
+                <p>Welcome. {user}</p>
+                <Button onClick={signoutuser} variant={"outline"} className="w-full">SignOut</Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </nav>
     </div>
   );
 };
-
-
-
-
-
-
