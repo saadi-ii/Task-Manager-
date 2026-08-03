@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent } from "react";
 import { AxiosError } from "axios";
 import { FaPlus } from "react-icons/fa6";
 import { createSubtask } from "@/lib/api/subtask/create";
@@ -11,31 +11,26 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 
 interface AddSubtaskProps {
-  boardid: string;
   taskid: string;
   onSuccess: () => void;
 }
 
-export const AddSubtask = ({ boardid,taskid, onSuccess }: AddSubtaskProps) => {
-  const router = useRouter()
+export const AddSubtask = ({ taskid, onSuccess }: AddSubtaskProps) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const subtaskname = new FormData(e.currentTarget).get("subtaskname") as string;
 
     try {
       await createSubtask({ taskid, subtaskname });
-      router.push(boardid)
       onSuccess();
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;

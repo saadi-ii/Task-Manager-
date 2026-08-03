@@ -101,7 +101,7 @@ export const TaskCard = ({ boardid, task, columns, tasks, currentColumn, onChang
                 tasks={tasks}
                 onSuccess={onChanged}
               />
-              <AddSubtask boardid={boardid} taskid={task._id} onSuccess={fetchSubtasks} />
+              <AddSubtask taskid={task._id} onSuccess={fetchSubtasks} />
               <RenameButton mode="task" taskname={task.taskname} onSuccess={onChanged} />
               <DeleteButton mode="task" taskname={task.taskname} columnid={task.columnid} onSuccess={onChanged} />
             </div>
@@ -114,20 +114,28 @@ export const TaskCard = ({ boardid, task, columns, tasks, currentColumn, onChang
         <Priority mode="task" taskname={task.taskname} columnid={task.columnid} onPriorityChange={setPriority} />
       </main>
 
-      {subtasksForTask.length > 0 && (
-        <footer className="flex items-center gap-2" onClick={stop}>
-          <div className="text-muted-foreground cursor-pointer flex items-center gap-1" onClick={() => setSubtasksVisible((v) => !v)}>
-            <SubtaskIcon />
-            <span>{subtasksForTask.length} subtask{subtasksForTask.length > 1 ? "s" : ""}</span>
+      <footer className="flex items-center justify-between" onClick={stop}>
+        <button
+          type="button"
+          onClick={() => setSubtasksVisible((v) => !v)}
+          className={`${subtasksForTask.length === 1?"opacity-100":"opacity-50" } w-full hover:text-foreground cursor-pointer flex justify-between items-center gap-1 text-xs transition-colors`}
+          aria-expanded={subtasksVisible}
+        >
+          <div className="flex justify-center items-center">
+          <SubtaskIcon />
+            <div>{subtasksForTask.length === 1 ? "subtask" : "subtasks"} </div>
           </div>
-        </footer>
-      )}
+            <div>{subtasksForTask.length} </div>
+        </button>
+      </footer>
 
-      <div className={`${subtasksVisible ? "flex" : "hidden"} flex-col gap-2`} onClick={stop}>
-        {subtasksForTask.map((subtask) => (
-          <SubtaskCard key={subtask._id} subtask={subtask} onChanged={fetchSubtasks} />
-        ))}
-      </div>
+      {subtasksVisible && subtasksForTask.length > 0 && (
+        <div className="flex flex-col gap-2" onClick={stop}>
+          {subtasksForTask.map((subtask) => (
+            <SubtaskCard key={subtask._id} subtask={subtask} onChanged={fetchSubtasks} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

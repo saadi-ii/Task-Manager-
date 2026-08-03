@@ -7,18 +7,18 @@ const colorClasses = {
         bg: "bg-chart-1",
         text: "text-chart-1",
     },
-    "chart-3": {
-        bg: "bg-chart-3",
-        text: "text-chart-3",
-    },
-    "chart-5": {
-        bg: "bg-chart-5",
-        text: "text-chart-5",
-    },
-    "chart-4": {
-        bg: "bg-chart-4",
-        text: "text-chart-4",
-    },
+    // "chart-3": {
+    //     bg: "bg-chart-3",
+    //     text: "text-chart-3",
+    // },
+    // "chart-5": {
+    //     bg: "bg-chart-5",
+    //     text: "text-chart-5",
+    // },
+    // "chart-4": {
+    //     bg: "bg-chart-4",
+    //     text: "text-chart-4",
+    // },
 } as const;
 
 export const Points = ({
@@ -39,7 +39,7 @@ export const Points = ({
                 <Icon size={30} />
             </div>
 
-            <h2 className="text-2xl font-bold max-sm:text-xl">{heading}</h2>
+            <h2 className="text-2xl font-bold max-sm:text-xl text-chart-1">{heading}</h2>
             <p className="text-xl max-sm:text-sm">{explanation}</p>
 
             <ul>

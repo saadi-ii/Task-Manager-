@@ -37,9 +37,9 @@ export const Navbar = () => {
 
   return (
     <div className="shrink-0 w-full">
-      <nav className="flex w-full h-14 bg-muted text-primary text-lg gap-10 justify-between px-10 items-center py-2">
+      <nav className="flex w-full h-14 bg-muted text-lg gap-10 justify-between px-10 items-center py-2">
         <div className="flex gap-10 items-center">
-          <div className="text-2xl font-bold">
+          <div className="text-2xl font-bold text-primary">
             Task Management
           </div>
           <div className="flex justify-center items-center gap-3 font-semibold max-[800px]:hidden">
@@ -71,7 +71,7 @@ export const Navbar = () => {
             <SheetContent side="right" className="p-6">
               <SheetTitle className="text-xl font-bold">Task Management</SheetTitle>
               <div className="flex flex-col gap-3 font-semibold mt-4">
-                <Link href={"/"} onClick={closeSheet} className="py-1 px-2 hover:text-foreground transition-all">Home</Link>
+                <Link href={"/"} onClick={closeSheet} className="py-1 px-2 hover:text-primary transition-all">Home</Link>
                 <Link href={user == "" ? "/signin" : "/board"} onClick={closeSheet} className="py-1 px-2 hover:text-foreground transition-all">Dashboard</Link>
               </div>
               <div className={`flex flex-col gap-2 mt-4 ${user == "" ? "" : "hidden"}`}>
@@ -79,7 +79,7 @@ export const Navbar = () => {
                 <Link href={"/signin"} onClick={closeSheet}><Button variant="outline" className="w-full">SignIn</Button></Link>
               </div>
               <div className={`flex flex-col items-start gap-2 mt-4 ${user == "" ? "hidden" : ""}`}>
-                <p>Welcome. {user}</p>
+                <p className="text-primary">Welcome. {user}</p>
                 <Button onClick={signoutuser} variant={"outline"} className="w-full">SignOut</Button>
               </div>
             </SheetContent>

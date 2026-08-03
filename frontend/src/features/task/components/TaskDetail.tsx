@@ -163,7 +163,7 @@ export const TaskDetail = ({ boardid, taskid }: TaskDetailProps) => {
               <div className="text-sm font-semibold">
                 Subtasks <span className="text-muted-foreground font-normal">({subtasks.length})</span>
               </div>
-              <AddSubtask boardid={boardid} taskid={task._id} onSuccess={load} />
+              <AddSubtask taskid={task._id} onSuccess={load} />
             </div>
             <div className="flex flex-col gap-2">
               {subtasks.length === 0 ? (
