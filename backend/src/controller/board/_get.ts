@@ -2,14 +2,12 @@ import { Request, Response } from "express"
 import boardModel from "../../model/board.model"
 import columnModel from "../../model/column.model"
 import taskModel from "../../model/task.model"
-import { renewRecurringTasks } from "../../lib/renewRecurringTasks"
 
 const TODO_COLUMN_NAME = "TO DO"
 
 export const _get = async (req: Request, res: Response): Promise<void> => {
     const userId = req.userId as string
     try {
-        await renewRecurringTasks(userId)
 
         const boards = await boardModel.find({ userID: userId })
         const boardIds = boards.map((b) => String(b._id))

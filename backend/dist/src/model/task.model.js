@@ -36,11 +36,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const taskSchema = new mongoose_1.Schema({
     columnid: { type: String, required: true },
+    columnname: { type: String, required: true },
     taskname: { type: String, required: true },
+    description: { type: String, required: true },
     userID: { type: String, required: true },
     priority: { type: String },
     comment: { type: String },
-    date: { type: String }
+    date: { type: String },
+    recurrence: { type: String, enum: ["once", "daily", "weekly", "monthly", "yearly"], default: "once" }
 });
 const taskModel = mongoose_1.default.model("task", taskSchema);
 exports.default = taskModel;

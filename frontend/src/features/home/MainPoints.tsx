@@ -1,6 +1,5 @@
-import { Points } from "@/shared/components/Points"
+import { Points } from "@/shared/components/home/Points"
 import { FaArrowTrendUp } from "react-icons/fa6";
-import { FaRegSmile } from "react-icons/fa";
 import { LuClock3 } from "react-icons/lu";
 import { FaBullseye } from "react-icons/fa";
 

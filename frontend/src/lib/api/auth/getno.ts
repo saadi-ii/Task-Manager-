@@ -1,5 +1,6 @@
-import { api } from "@/lib/api/baseURL";
+import { api2 } from "@/lib/api/baseURL.server";
 
-export const getno = () => {
-  return api.get("/user/getno");
-};
+export const getno = async () => {
+  const { data } = await (await api2()).get("/user/getno");
+  return data;
+}; 

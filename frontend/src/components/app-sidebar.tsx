@@ -39,32 +39,10 @@ const greatVibes = Great_Vibes({
 
 
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const router = useRouter();
-  const [boards, setBoards] = useState<Board[]>([]);
-
-  const fetchBoards = () => {
-    getBoards()
-      .then((res) => {
-        setBoards(res.data.boards)
-      })
-      .catch((error: AxiosError) => {
-        if (error?.response?.status === 401) {
-          router.replace("/signin");
-        }
-      });
-  };
-  useEffect(() => {
-    fetchBoards();
-  }, []);
-
-  useEffect(() => {
-    const handleBoardChanged = () => {
-      fetchBoards();
-    };
-    window.addEventListener("board-changed", handleBoardChanged);
-    return () => window.removeEventListener("board-changed", handleBoardChanged);
-  }, []);
+export function AppSidebar({boards,...props }: {
+  boards: Board[]
+} &
+  React.ComponentProps<typeof Sidebar>) {  
 
   const data = {
     navMain: [

@@ -27,7 +27,7 @@ export const _signup = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const hashedPassword = await bcryptjs.hash(password, 10);
+        const hashedPassword = await bcryptjs.hash(password, 10); // hashing rounds (cryptographic key-expansion process)
 
         const newUser = await userModel.create({
             username,
@@ -38,18 +38,18 @@ export const _signup = async (req: Request, res: Response): Promise<void> => {
         try {
             await createDefaultBoards(String(newUser._id));
         } catch {
-            // no-op
+            res.status(500).json({ message: "Can not create Default baords" });
         }
 
         const token = jwt.sign({
             _id: newUser._id,
-        }, process.env.JWT_SECRET as string);
+        }, process.env.JWT_SECRET as string);  // using the formula what is HMAC-SHA256 formula  HMAC(Hash-based Message Authentication Code).
 
         const isProd = process.env.NODE_ENV === "production"
         res.cookie("token", token, {
             httpOnly: true,
             sameSite: "lax",
-            secure: isProd,
+            secure: isProd, 
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });

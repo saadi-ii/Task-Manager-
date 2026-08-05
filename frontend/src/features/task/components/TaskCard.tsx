@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState, useRef } from "react";
+import { useLayoutEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getSubtasks } from "@/lib/api/subtask/get";
 import { Subtask } from "@/lib/types/subtask.types";
 import { Task } from "@/lib/types/task.types";
 import { Column } from "@/lib/types/column.types";
-import { ItemName } from "@/shared/components/ItemName";
-import { RenameButton } from "@/shared/components/RenameButton";
-import { DeleteButton } from "@/shared/components/DeleteButton";
-import { DueDate } from "@/shared/components/DueDate";
-import { Priority } from "@/shared/components/Priority";
+import { ItemName } from "@/shared/components/task-subtask/ItemName";
+import { RenameButton } from "@/shared/components/task-subtask/RenameButton";
+import { DeleteButton } from "@/shared/components/task-subtask/DeleteButton";
+import { DueDate } from "@/shared/components/task-subtask/DueDate";
+import { Priority } from "@/shared/components/task-subtask/Priority";
 import { SubtaskIcon } from "@/shared/components/SubtaskIcon";
 import { MoveTask } from "./MoveTask";
 import { AdvanceTaskButton } from "./AdvanceTaskButton";
@@ -19,51 +18,40 @@ import { SubtaskCard } from "@/features/subtask/components/SubtaskCard";
 import { Menu } from "lucide-react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+
+
 interface TaskCardProps {
   boardid: string,
   task: Task;
   columns: Column[];
   tasks: Task[];
+  subtasks: Subtask[];
   currentColumn: Column;
   onChanged: () => void;
 }
 
-export const TaskCard = ({ boardid, task, columns, tasks, currentColumn, onChanged }: TaskCardProps) => {
+export const TaskCard = ({ boardid, task, columns, tasks, subtasks, currentColumn, onChanged }: TaskCardProps) => {
   const router = useRouter();
-  const [subtasks, setSubtasks] = useState<Subtask[]>([]);
-  const [priority, setPriority] = useState("");
+  const [priority, setPriority] = useState(task.priority ?? "");
   const [subtasksVisible, setSubtasksVisible] = useState(false);
-  const [headVisible, setheadVisible] = useState(false);
-  const [menuCoords, setMenuCoords] = useState<{ top: number; left: number } | null>(null);
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  useClickOutside(panelRef, () => setheadVisible(false), triggerRef);
 
-  useLayoutEffect(() => {
-    if (!headVisible || !triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    setMenuCoords({ top: rect.bottom + 4, left: rect.right - 80 });
-  }, [headVisible]);
-
-
-  const fetchSubtasks = () => {
-    getSubtasks().then((res) => setSubtasks(res.data.subtasks));
-  };
-
-  useEffect(() => {
-    fetchSubtasks();
-  }, []);
 
   const subtasksForTask = subtasks.filter((subtask) => subtask.taskid === task._id);
 
   const priorityBorder =
     priority === "urgent" ? "border-l-red-500"
-    : priority === "high" ? "border-l-orange-500"
-    : priority === "normal" ? "border-l-yellow-500"
-    : priority === "low" ? "border-l-green-500"
-    : "border-l-gray-200";
+      : priority === "high" ? "border-l-orange-500"
+        : priority === "normal" ? "border-l-yellow-500"
+          : priority === "low" ? "border-l-green-500"
+            : "border-l-gray-200";
 
-  const openDetail = () => router.push(`/board/${boardid}/task/${task._id}`);
+  const openDetail = () => router.push(`/board/${boardid}/${task._id}`);
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
@@ -82,17 +70,23 @@ export const TaskCard = ({ boardid, task, columns, tasks, currentColumn, onChang
       <header className="flex justify-between items-center">
         <ItemName name={task.taskname} />
         <div onClick={stop}>
-          <div ref={triggerRef} className="text-muted-foreground cursor-pointer" onClick={() => setheadVisible((v) => !v)}>
-            <Menu className="size-4" />
-          </div>
-          {headVisible && menuCoords && (
-            <div
-              ref={panelRef}
-              style={{ top: menuCoords.top, left: menuCoords.left }}
-              className="fixed bg-accent w-24 flex flex-col items-start pl-1 gap-0.5 border rounded-lg p-1 border-border z-50 shadow-lg"
+          <DropdownMenu>
+            <DropdownMenuTrigger className="text-muted-foreground cursor-pointer flex items-center justify-center">
+              <Menu className="size-4" />
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="end"
+              className="flex flex-col p-2 gap-1 items-start justify-center "
               onClick={stop}
             >
-              <AdvanceTaskButton taskId={task._id} currentColumn={currentColumn} columns={columns} onSuccess={onChanged} />
+              <AdvanceTaskButton
+                taskId={task._id}
+                currentColumn={currentColumn}
+                columns={columns}
+                onSuccess={onChanged}
+              />
+
               <MoveTask
                 taskId={task._id}
                 taskName={task.taskname}
@@ -101,41 +95,59 @@ export const TaskCard = ({ boardid, task, columns, tasks, currentColumn, onChang
                 tasks={tasks}
                 onSuccess={onChanged}
               />
-              <AddSubtask taskid={task._id} onSuccess={fetchSubtasks} />
-              <RenameButton mode="task" taskname={task.taskname} onSuccess={onChanged} />
-              <DeleteButton mode="task" taskname={task.taskname} columnid={task.columnid} onSuccess={onChanged} />
-            </div>
-          )}
+
+              <AddSubtask
+                taskid={task._id}
+                onSuccess={onChanged}
+              />
+
+              <RenameButton
+                mode="task"
+                taskname={task.taskname}
+                onSuccess={onChanged}
+              />
+
+              <DeleteButton
+                mode="task"
+                taskname={task.taskname}
+                columnid={task.columnid}
+                onSuccess={onChanged}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
       <main className="flex gap-0.5" onClick={stop}>
-        <DueDate mode="task" taskname={task.taskname} columnid={task.columnid} />
-        <Priority mode="task" taskname={task.taskname} columnid={task.columnid} onPriorityChange={setPriority} />
+        <DueDate mode="task" taskname={task.taskname} columnid={task.columnid} date={task.date} />
+        <Priority mode="task" taskname={task.taskname} columnid={task.columnid} priority={task.priority} onPriorityChange={setPriority} />
       </main>
 
       <footer className="flex items-center justify-between" onClick={stop}>
         <button
           type="button"
           onClick={() => setSubtasksVisible((v) => !v)}
-          className={`${subtasksForTask.length === 1?"opacity-100":"opacity-50" } w-full hover:text-foreground cursor-pointer flex justify-between items-center gap-1 text-xs transition-colors`}
+          className={`${subtasksForTask.length === 1 ? "opacity-100" : "opacity-50"} w-full hover:text-foreground cursor-pointer flex justify-between items-center gap-1 text-xs transition-colors`}
           aria-expanded={subtasksVisible}
         >
           <div className="flex justify-center items-center">
-          <SubtaskIcon />
-            <div>{subtasksForTask.length === 1 ? "subtask" : "subtasks"} </div>
+            <SubtaskIcon />
+            <div>{subtasksForTask.length === 1 || subtasksForTask.length === 0 ? "subtask" : "subtasks"} </div>
           </div>
-            <div>{subtasksForTask.length} </div>
+          <div>{subtasksForTask.length} </div>
         </button>
       </footer>
 
       {subtasksVisible && subtasksForTask.length > 0 && (
         <div className="flex flex-col gap-2" onClick={stop}>
           {subtasksForTask.map((subtask) => (
-            <SubtaskCard key={subtask._id} subtask={subtask} onChanged={fetchSubtasks} />
+            <SubtaskCard key={subtask._id} subtask={subtask} onChanged={onChanged} />
           ))}
         </div>
       )}
     </div>
   );
 };
+
+
+

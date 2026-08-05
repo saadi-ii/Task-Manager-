@@ -16,20 +16,21 @@ export const _signin = async (req: Request, res: Response): Promise<void> => {
             { email:username }
         ]
     })
+    
     if (!isUserExist) {
-        res.status(401).json({message:"Please user First"})
+        res.status(401).json({message:"Please Signup First"})
         return 
     }
     const verifyPassword = await bcryptjs.compare(password,isUserExist.password)
+    
     if (!verifyPassword) {
         res.status(401).json({message:"Incorrect password"})
         return
     }
-
     const token = await jwt.sign({
         _id: isUserExist._id,
     }, process.env.JWT_SECRET as string)
-
+    
     const isProd = process.env.NODE_ENV === "production"
     res.cookie("token", token, {
         httpOnly: true,
@@ -38,6 +39,6 @@ export const _signin = async (req: Request, res: Response): Promise<void> => {
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000
     })
-
+    
     res.status(201).json({ username : isUserExist.username})
 }

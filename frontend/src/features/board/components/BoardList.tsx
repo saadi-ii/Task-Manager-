@@ -1,42 +1,24 @@
-"use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { AxiosError } from "axios";
-import { getBoards } from "@/lib/api/board/get";
+import { revalidatePath } from "next/cache";
 import { Board } from "@/lib/types/board.types";
-import { DeleteButton } from "@/shared/components/DeleteButton";
+import { DeleteButton } from "@/shared/components/task-subtask/DeleteButton";
 import { Report } from "./Report";
 import { Tip } from "./Tip";
 
-export const BoardList = () => {
-  const router = useRouter();
-  const [boards, setBoards] = useState<Board[]>([]);
 
-  const fetchBoards = () => {
-    getBoards()
-      .then((res) => {
-        setBoards(res.data.boards)
-      })
-      .catch((error: AxiosError) => {
-        if (error?.response?.status === 401) {
-          router.replace("/signin");
-        }
-      });
+interface BoardListProps {
+  boards: Board[],
+  Todo:number,
+  Progress:number,
+  Completed:number
+}
+
+export const BoardList = async ({boards,Todo,Progress,Completed}:BoardListProps) => {
+  const refreshBoards = async () => {
+    "use server";
+    revalidatePath("/board","layout");
   };
-
-  useEffect(() => {
-    fetchBoards();
-  }, []);
-
-  useEffect(() => {
-    const handleBoardChanged = () => {
-      fetchBoards();
-    };
-    window.addEventListener("board-changed", handleBoardChanged);
-    return () => window.removeEventListener("board-changed", handleBoardChanged);
-  }, []);
 
   return (
     <div className="flex max-xl:flex-col justify-center max-xl:items-center gap-9">
@@ -60,7 +42,7 @@ export const BoardList = () => {
                   <span className="font-semibold">{board.todoCount ?? 0}</span>
                   <span className="text-muted-foreground">to do</span>
                 </div>
-                {!board.isDefault && <DeleteButton mode="board" boardId={board._id} onSuccess={fetchBoards} />}
+                {!board.isDefault && <DeleteButton mode="board" boardId={board._id} onSuccess={refreshBoards} />}
               </div>
             </Link>
           ))
@@ -69,7 +51,7 @@ export const BoardList = () => {
         )}
       </div>
       <div className="flex flex-col max-sm:flex-col max-xl:flex-row max-xl:sticky max-xl:bottom-5 max-2xl:top-5 z-10  gap-5">
-        <Report />
+        <Report Todo={Todo} Progress={Progress} Completed={Completed}/>
         <Tip />
       </div>
     </div>

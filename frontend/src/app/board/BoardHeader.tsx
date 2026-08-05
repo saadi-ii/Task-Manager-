@@ -17,17 +17,23 @@ import { getBoards } from "@/lib/api/board/get";
 export function BoardHeader() {
   const pathname = usePathname();
   const params = useParams();
+  
   const [boardName, setBoardName] = useState("");
 
   const boardId = params?.id as string | undefined;
   const isSingleBoard = !!boardId && pathname.includes(`/board/${boardId}`);
+
+
 
   useEffect(() => {
     if (isSingleBoard && boardId) {
       getBoards()
         .then((res) => {
           const board = res.data.boards.find((b) => b._id === boardId);
-          if (board) setBoardName(board.boardname);
+          if (board){
+            setBoardName(board.boardname);
+          }
+
         })
         .catch(() => {});
     }

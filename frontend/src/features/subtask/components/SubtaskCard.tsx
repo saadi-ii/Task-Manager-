@@ -1,9 +1,11 @@
+"use client";
+
 import { Subtask } from "@/lib/types/subtask.types";
-import { ItemName } from "@/shared/components/ItemName";
-import { RenameButton } from "@/shared/components/RenameButton";
-import { DeleteButton } from "@/shared/components/DeleteButton";
-import { DueDate } from "@/shared/components/DueDate";
-import { Priority } from "@/shared/components/Priority";
+import { ItemName } from "@/shared/components/task-subtask/ItemName";
+import { RenameButton } from "@/shared/components/task-subtask/RenameButton";
+import { DeleteButton } from "@/shared/components/task-subtask/DeleteButton";
+import { DueDate } from "@/shared/components/task-subtask/DueDate";
+import { Priority } from "@/shared/components/task-subtask/Priority";
 import { Menu } from "lucide-react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useLayoutEffect, useState, useRef } from "react";
@@ -15,7 +17,7 @@ interface SubtaskCardProps {
 
 export const SubtaskCard = ({ subtask, onChanged }: SubtaskCardProps) => {
   const [headVisible, setheadVisible] = useState(false);
-  const [priority, setPriority] = useState("");
+  const [priority, setPriority] = useState(subtask.priority ?? "");
   const [menuCoords, setMenuCoords] = useState<{ top: number; left: number } | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -55,8 +57,8 @@ export const SubtaskCard = ({ subtask, onChanged }: SubtaskCardProps) => {
         </div>
       </header>
       <main className="flex gap-0.5">
-        <DueDate mode="subtask" taskid={subtask.taskid} subtaskname={subtask.subtaskname} />
-        <Priority mode="subtask" taskid={subtask.taskid} subtaskname={subtask.subtaskname} onPriorityChange={setPriority} />
+        <DueDate mode="subtask" taskid={subtask.taskid} subtaskname={subtask.subtaskname} date={subtask.date} />
+        <Priority mode="subtask" taskid={subtask.taskid} subtaskname={subtask.subtaskname} priority={subtask.priority} onPriorityChange={setPriority} />
       </main>
     </div>
   );

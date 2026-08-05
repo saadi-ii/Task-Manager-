@@ -1,5 +1,3 @@
-"use client"
-
 import { SignupForm } from "@/components/signup-form";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,7 +6,6 @@ import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react"
 
 export const SignupPage = () => {
-
   return (
     <div className="grid h-screen w-full lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">

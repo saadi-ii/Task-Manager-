@@ -11,16 +11,25 @@ import {
 import { ReactNode } from "react";
 import "../globals.css";
 
+import { Board } from "@/lib/types/board.types";
+import { getBoardsServer } from "@/lib/api/board/server-get";
 
 
-export default function BoardLayout({
+
+export default async function BoardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
+    let boards: Board[] = [];
+    try {
+      boards = await getBoardsServer();
+    } catch (err) {
+      console.error("Failed to fetch boards:", err);
+    }
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar boards={boards}/>
 
       <SidebarInset className="min-w-0 overflow-hidden">
         <header className="flex h-16 min-w-0 shrink-0 items-center gap-2 border-b px-4">

@@ -36,7 +36,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const columnSchema = new mongoose_1.Schema({
     boardid: { type: String, required: true },
-    columnname: { type: String, required: true }
+    columnname: { type: String, required: true },
+    isDefault: { type: Boolean, default: false }
 });
 const columnModel = mongoose_1.default.model("column", columnSchema);
 exports.default = columnModel;

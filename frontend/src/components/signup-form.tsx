@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -44,6 +46,7 @@ export function SignupForm({
       window.dispatchEvent(new Event("auth-changed"));
       toast.success("Welcome");
       router.push("/board");
+      router.refresh()
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message ?? "Something went wrong");

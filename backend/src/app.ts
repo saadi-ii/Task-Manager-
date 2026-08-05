@@ -22,7 +22,7 @@ app.use(cors({
   credentials: true
 }))
 app.use(express.json())
-app.use(cookieParser())
+app.use(cookieParser()) 
 
 app.use(async (_req, _res, next) => {
   try {

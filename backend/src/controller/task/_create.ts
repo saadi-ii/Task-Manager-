@@ -1,7 +1,12 @@
 import { Request, Response } from "express"
 import taskModel from "../../model/task.model"
-import { endOfPeriod, isDateInPast } from "../../lib/recurrence"
-import { deriveRecurrence } from "../../lib/defaultRecurrence"
+
+const pad = (n: number) => String(n).padStart(2, "0")
+const toYMD = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+const isDateInPast = (dateStr?: string): boolean => {
+    if (!dateStr) return false
+    return dateStr < toYMD(new Date())
+}
 
 export const _create = async (req: Request, res: Response): Promise<void> => {
     const data = req.body
@@ -23,10 +28,10 @@ export const _create = async (req: Request, res: Response): Promise<void> => {
         return
     }
 
-    const recurrence = await deriveRecurrence(data.columnid)
-    const date = recurrence === "once" ? data.deadLine : endOfPeriod(recurrence)
+    const recurrence = "once"
+    const date = data.deadLine
 
-    if (recurrence === "once" && isDateInPast(date)) {
+    if (isDateInPast(date)) {
         res.status(400).json({ message: "Due date cannot be in the past" })
         return
     }

@@ -36,7 +36,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const schema = new mongoose_1.Schema({
     boardname: { type: String, required: true },
-    userID: { type: String, required: true }
+    boarddescription: { type: String, required: true },
+    userID: { type: String, required: true },
+    isDefault: { type: Boolean, default: false }
 });
 const boardModel = mongoose_1.default.model("board", schema);
 exports.default = boardModel;

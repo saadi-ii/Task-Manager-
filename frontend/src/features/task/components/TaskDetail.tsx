@@ -1,78 +1,49 @@
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
-import { AxiosError } from "axios";
 import Link from "next/link";
-import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getTaskDetailServer } from "@/lib/api/task/server-get";
+import { getColumnsServer } from "@/lib/api/column/server-get";
+import { getTasksServer } from "@/lib/api/task/server-get";
+import { getUserServer } from "@/lib/api/auth/server-get";
 import { Task } from "@/lib/types/task.types";
 import { Subtask } from "@/lib/types/subtask.types";
-import { Comment } from "@/lib/types/comment.types";
 import { Column } from "@/lib/types/column.types";
-import { getTaskDetail } from "@/lib/api/task/getAll";
-import { getColumns } from "@/lib/api/column/get";
-import { getTasks } from "@/lib/api/task/get";
-import { get as getUser } from "@/lib/api/auth/get";
-import { DueDate } from "@/shared/components/DueDate";
-import { Priority } from "@/shared/components/Priority";
+import { Comment } from "@/lib/types/comment.types";
+import { DueDate } from "@/shared/components/task-subtask/DueDate";
+import { Priority } from "@/shared/components/task-subtask/Priority";
 import { AddSubtask } from "@/features/subtask/components/AddSubtask";
 import { SubtaskCard } from "@/features/subtask/components/SubtaskCard";
 import { MoveTask } from "./MoveTask";
 import { AdvanceTaskButton } from "./AdvanceTaskButton";
-import { RenameButton } from "@/shared/components/RenameButton";
-import { DeleteButton } from "@/shared/components/DeleteButton";
+import { RenameButton } from "@/shared/components/task-subtask/RenameButton";
+import { DeleteButton } from "@/shared/components/task-subtask/DeleteButton";
 import { CommentSection } from "./CommentSection";
+import { revalidatePath } from "next/cache";
 
 interface TaskDetailProps {
-  boardid: string;
-  taskid: string;
+  boardid: string,
+  taskid: string,
+  task: Task | null,
+  subtasks: Subtask[],
+  comments: Comment[],
+  columns: Column[],
+  allTasks: Task[],
+  username: string,
+  notFound: boolean,
 }
 
-export const TaskDetail = ({ boardid, taskid }: TaskDetailProps) => {
-  const [task, setTask] = useState<Task | null>(null);
-  const [subtasks, setSubtasks] = useState<Subtask[]>([]);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [columns, setColumns] = useState<Column[]>([]);
-  const [allTasks, setAllTasks] = useState<Task[]>([]);
-  const [username, setUsername] = useState<string | undefined>();
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+export const TaskDetail = async ({ boardid, taskid, task, subtasks, comments, columns, allTasks, username, notFound }: TaskDetailProps) => {
+  const load = async () => {
+    "use server";
+    revalidatePath(`/board/${boardid}/${taskid}`);
+  };
 
-  const load = useCallback(async () => {
-    try {
-      const [detail, cols, tasks, user] = await Promise.all([
-        getTaskDetail(taskid),
-        getColumns(boardid),
-        getTasks(),
-        getUser().catch(() => null),
-      ]);
-      setTask(detail.data.task);
-      setSubtasks(detail.data.subtasks);
-      setComments(detail.data.comments);
-      setColumns(cols.data.columns);
-      setAllTasks(tasks.data.tasks);
-      if (user) setUsername(user.data.username);
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      if (err.response?.status === 404) {
-        setNotFound(true);
-      } else {
-        toast.error(err.response?.data?.message ?? "Failed to load task");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [taskid, boardid]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
+  const goToBoard = async () => {
+    "use server";
+    redirect(`/board/${boardid}`);
+  };
 
   const currentColumn = columns.find((c) => c._id === task?.columnid);
-
-  if (loading) {
-    return <div className="p-8 text-muted-foreground">Loading task...</div>;
-  }
   if (notFound || !task) {
     return (
       <div className="p-8">
@@ -120,9 +91,7 @@ export const TaskDetail = ({ boardid, taskid }: TaskDetailProps) => {
               mode="task"
               taskname={task.taskname}
               columnid={task.columnid}
-              onSuccess={() => {
-                window.location.href = `/board/${boardid}`;
-              }}
+              onSuccess={goToBoard}
             />
           </div>
         </div>
@@ -137,10 +106,10 @@ export const TaskDetail = ({ boardid, taskid }: TaskDetailProps) => {
               </span>
             </FieldRow>
             <FieldRow label="Priority">
-              <Priority mode="task" taskname={task.taskname} columnid={task.columnid} />
+              <Priority mode="task" taskname={task.taskname} columnid={task.columnid} priority={task.priority} />
             </FieldRow>
             <FieldRow label="Due">
-              <DueDate mode="task" taskname={task.taskname} columnid={task.columnid} />
+              <DueDate mode="task" taskname={task.taskname} columnid={task.columnid} date={task.date} />
             </FieldRow>
             <FieldRow label="Repeat">
               <span className="text-muted-foreground capitalize">

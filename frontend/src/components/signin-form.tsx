@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,9 +13,9 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { FormEvent } from "react";
 import { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
 import { signin } from "@/lib/api/auth/signin";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function SigninForm({
   className,
@@ -32,7 +34,8 @@ export function SigninForm({
     try {
       await signin({ username,email, password });
       window.dispatchEvent(new Event("auth-changed"));
-      router.push("/board");
+      router.push("/");
+      router.refresh()
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message ?? "Something went wrong");

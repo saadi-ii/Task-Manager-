@@ -35,6 +35,7 @@ export const CreateBoardIcon = () => {
       await createBoard({ boardname,boarddescription });
       setOpen(false);
       window.dispatchEvent(new Event("board-changed"));
+      router.refresh();
       router.push("/board")
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;

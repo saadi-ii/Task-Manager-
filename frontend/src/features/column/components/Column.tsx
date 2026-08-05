@@ -1,8 +1,7 @@
-
-
 import { Task } from "@/lib/types/task.types";
+import { Subtask } from "@/lib/types/subtask.types";
 import { Column as ColumnType } from "@/lib/types/column.types";
-import { DeleteButton } from "@/shared/components/DeleteButton";
+import { DeleteButton } from "@/shared/components/task-subtask/DeleteButton";
 import { AddTask } from "@/features/task/components/AddTask";
 import { TaskCard } from "@/features/task/components/TaskCard";
 
@@ -11,17 +10,20 @@ interface ColumnProps {
   column: ColumnType;
   columns: ColumnType[];
   tasks: Task[];
+  subtasks: Subtask[];
   onTasksChanged: () => void;
   onDeleted: () => void;
 }
 
-export const Column = ({ boardid,column, columns, tasks, onTasksChanged, onDeleted }: ColumnProps) => {
+export const Column = ({ boardid,column, columns, tasks, subtasks, onTasksChanged, onDeleted }: ColumnProps) => {
   const tasksInColumn = tasks.filter((task) => task.columnid === column._id);
-   const dotColor =
-    column.columnname === "TO DO" ? "bg-white"
+   const dotColor = column.columnname === "TO DO" ? "bg-white"
     : column.columnname === "In Progress" ? "bg-blue-700"
     : column.columnname === "Completed" ? "bg-green-700"
     : "bg-transparent";
+
+
+
   return (
     <div className="relative w-50 h-fit min-w-50 bg-muted p-2 rounded-2xl flex flex-col gap-2  overflow-y-clip ">
       <header className="flex justify-between items-center">
@@ -35,11 +37,15 @@ export const Column = ({ boardid,column, columns, tasks, onTasksChanged, onDelet
           )}
         </div>
       </header>
+
+
       <main className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">
         {tasksInColumn.map((task) => (
-          <TaskCard boardid={boardid} key={task._id} task={task} columns={columns} tasks={tasks} currentColumn={column} onChanged={onTasksChanged} />
+          <TaskCard boardid={boardid} key={task._id} task={task} columns={columns} tasks={tasks} subtasks={subtasks} currentColumn={column} onChanged={onTasksChanged} />
         ))}
       </main>
+
+      
       <footer>
         <AddTask boardid={boardid} columnid={column._id} label="Add Task" onSuccess={onTasksChanged} columnname={column.columnname}/>
       </footer>

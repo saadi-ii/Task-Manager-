@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const subtask_controller_1 = require("../controller/subtask.controller");
+const subtask_controller_1 = require("../controller/subtask/subtask.controller");
 const router = (0, express_1.Router)();
 router.post("/create", subtask_controller_1._create);
 router.get("/get", subtask_controller_1._get);

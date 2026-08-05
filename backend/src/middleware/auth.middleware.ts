@@ -4,7 +4,7 @@ import signUpModel from "../model/user.model"
 import dotenv from "dotenv"
 dotenv.config()
 
-declare global {
+declare global { // Decleration merging. it extend TypeScript's built-in type definitions for Express
     namespace Express {
         interface Request {
             userId?: string
@@ -17,6 +17,7 @@ export const authMiddleware = async (
     res: Response,
     next: NextFunction
 ): Promise<void> => {
+    
     const token = req.cookies?.token as string | undefined
     const secret = process.env.JWT_SECRET as string
 
@@ -27,7 +28,6 @@ export const authMiddleware = async (
 
     try {
         const decode = jwt.verify(token, secret) as JwtPayload
-
         const isUserExist = await signUpModel.findOne({ _id: decode._id })
         if (!isUserExist) {
             res.status(401).json({ message: "Unauthorized: User not found" })

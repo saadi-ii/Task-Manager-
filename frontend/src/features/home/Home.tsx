@@ -1,10 +1,8 @@
-
-
-import { Head } from "./Head";
+import { Head } from "./head/Head";
 import {MainPoints} from "./MainPoints"
 import {Pic} from "./Pic"
 import {Card} from "./Card"
-import {Footer} from "./Footer"
+import {Footer} from "./footer/Footer"
 
 
 const Home = () => {

@@ -1,34 +1,10 @@
-"use client"
-import { getno } from "@/lib/api/auth/getno"
-import { useEffect, useState } from "react"
-
-type ReportProps = {
-    thickness?: number
-    className?: string
+interface report {
+    Todo:number,
+    Progress:number,
+    Completed:number
 }
 
-export const Report = ({
-    thickness = 10,
-    className = '',
-}: ReportProps) => {
-    const [Todo, setTodo] = useState(0)
-    const [Progress, setProgress] = useState(0)
-    const [Completed, setCompleted] = useState(0)
-
-    useEffect(() => {
-        const loadCounts = async () => {
-            try {
-                const res = await getno()
-                setTodo(res.data.todo)
-                setProgress(res.data.progress)
-                setCompleted(res.data.completed)
-            } catch {
-                // no-op
-            }
-        }
-        loadCounts()
-    }, [])
-
+export const Report = async({Todo,Progress,Completed}:report) => {
     const total = Todo + Progress + Completed
     const percentage = total === 0 ? 0 : (Completed / total) * 100
 
@@ -40,12 +16,12 @@ export const Report = ({
                 <div className="font-semibold text-6xl max-lg:text-3xl  text-chart-1 w-fit">{Math.floor(percentage)}% </div>
                 <div className="flex flex-col translate-y-10">
                     <div className="text-md text-chart-1">Target </div>
-                <div className="text-md text-chart-1">Reached</div>
+                    <div className="text-md text-chart-1">Reached</div>
                 </div>
             </div>
             <div
-                className={`relative w-full rounded-full bg-white overflow-hidden ${className}`}
-                style={{ height: thickness }}
+                className={`relative w-full rounded-full bg-white overflow-hidden `}
+                style={{ height: 10 }}
                 aria-hidden="true"
             >
                 <div

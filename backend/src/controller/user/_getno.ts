@@ -7,7 +7,6 @@ dotenv.config()
 
 
 export const _getno = async (req: Request, res: Response): Promise<void> => {
-
     const userId = req.userId as string
     try {
         const user = await userModel.findOne({

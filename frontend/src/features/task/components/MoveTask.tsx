@@ -7,6 +7,13 @@ import { Column } from "@/lib/types/column.types";
 import { Task } from "@/lib/types/task.types";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+
 interface MoveTaskProps {
   taskId: string;
   taskName: string;
@@ -17,9 +24,7 @@ interface MoveTaskProps {
 }
 
 export const MoveTask = ({ taskId, taskName, currentColumnId, columns, tasks, onSuccess }: MoveTaskProps) => {
-  const [visible, setVisible] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
-  useClickOutside(panelRef, () => setVisible(false));
 
   const columnsWithSameName = new Set(
     tasks
@@ -34,26 +39,35 @@ export const MoveTask = ({ taskId, taskName, currentColumnId, columns, tasks, on
   const handleMove = async (columnid: string, columnname: string) => {
     try {
       await moveTask({ taskid: taskId, columnid, columnname });
-      setVisible(false);
       onSuccess();
-    } catch {
-      // no-op
+    } catch(err) {
+      console.error(err)
     }
   };
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
-    <div  onClick={() => setVisible((v) => !v)}  className="relative flex justify-center items-center text-sm text-gray-600 hover:text-black">
-      <FiArrowRightCircle/>
-        <div>Move</div>
-      <div
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        type="button"
+        onClick={(e) => e.stopPropagation()}
+        className="text-muted-foreground cursor-pointer flex items-center justify-center"
+      >
+        <FiArrowRightCircle />
+        <span>Move</span>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
         ref={panelRef}
-        className={`${visible ? "visible" : "hidden"} absolute top-6 right-0 bg-primary text-primary-foreground w-40 flex flex-col rounded-xl p-2 z-20 gap-1`}
+        align="end"
+        className="flex flex-col p-2 gap-1 items-start justify-center "
+        onClick={stop}
       >
         {otherColumns.length > 0 ? (
           otherColumns.map((column) => (
             <div
               key={column._id}
-              className="cursor-pointer hover:bg-foreground rounded px-1"
+              className="cursor-pointer opacity-50 hover:opacity-100 rounded px-1"
               onClick={() => handleMove(column._id, column.columnname)}
             >
               {column.columnname}
@@ -62,7 +76,11 @@ export const MoveTask = ({ taskId, taskName, currentColumnId, columns, tasks, on
         ) : (
           <div className="text-muted-foreground">No other columns</div>
         )}
-      </div>
-    </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
+
+
   );
 };
+
+

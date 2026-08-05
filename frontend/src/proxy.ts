@@ -1,28 +1,17 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-
-const PROTECTED_PREFIXES = ["/board"]
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 export function proxy(request: NextRequest) {
-    const { pathname } = request.nextUrl
-    const token = request.cookies.get("token")?.value
+  const hasToken = request.cookies.has('token')
 
-    const isProtected = PROTECTED_PREFIXES.some(
-        (p) => pathname === p || pathname.startsWith(`${p}/`)
-    )
+  if (!hasToken) {
+    return NextResponse.redirect(new URL('/signin', request.url))
+  }
 
-    if (isProtected && !token) {
-        const url = request.nextUrl.clone()
-        url.pathname = "/signin"
-        url.searchParams.set("from", pathname)
-        return NextResponse.redirect(url)
-    }
-
-    return NextResponse.next()
+  return NextResponse.next()
 }
 
 export const config = {
-    matcher: [
-        "/board/:path*",
-    ],
+  matcher: '/board/:path*',
 }
+

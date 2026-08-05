@@ -13,11 +13,20 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { Board } from "@/lib/types/board.types";
+import { getBoardsServer } from "@/lib/api/board/server-get";
 
-export default function Page() {
+
+export default async function Page() {
+    let boards: Board[] = [];
+    try {
+      boards = await getBoardsServer();
+    } catch (err) {
+      console.error("Failed to fetch boards:", err);
+    }
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar boards={boards}/>
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />

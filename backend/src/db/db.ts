@@ -13,6 +13,7 @@ const connectDB = (): Promise<typeof mongoose> => {
             throw err
         })
     }
+    
     return cachedPromise
 }
 

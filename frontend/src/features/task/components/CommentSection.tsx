@@ -1,10 +1,10 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Comment } from "@/lib/types/comment.types";
-import { getComments } from "@/lib/api/comment/get";
+
 import { createComment } from "@/lib/api/comment/create";
 import { deleteComment } from "@/lib/api/comment/delete";
 import { Button } from "@/components/ui/button";
@@ -21,18 +21,7 @@ export const CommentSection = ({ taskid, initialComments, currentUsername }: Com
   const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const refresh = async () => {
-    try {
-      const res = await getComments(taskid);
-      setComments(res.data.comments);
-    } catch {
-      // no-op
-    }
-  };
 
-  useEffect(() => {
-    if (!initialComments) refresh();
-  }, [taskid]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
