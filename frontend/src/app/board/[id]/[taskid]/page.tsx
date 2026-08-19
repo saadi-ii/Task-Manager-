@@ -32,6 +32,8 @@ export default async function Page({ params }: Params) {
         getTasksServer(),
         getUserServer().catch(() => null),
       ]);
+
+      
   
       if (!detail) {
         notFound = true;

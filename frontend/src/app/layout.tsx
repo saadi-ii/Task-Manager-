@@ -27,9 +27,9 @@ export default async function RootLayout({
     <html
       lang="en"
     >
-      <body className="flex flex-col h-screen w-full overflow-hidden">
+      <body className="flex flex-col min-h-screen w-full">
         <NavbarWrapper  username = {user}/>
-        <main className="flex-1 overflow-auto h-full w-full">
+        <main className="flex-1 w-full">
           {children}
         </main>
         <Toaster/>
